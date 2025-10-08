@@ -12,7 +12,8 @@ PopsList = ""
 
 # i should make another script so this can be the main script... oh well..
 def UpdatePopDatabase():
-    os.remove(RootDir + "\\database.json")
+    #TODO Add if database exists
+        os.remove(RootDir + "\\database.json")
     global PopsList
     PopsDir = RootDir + "//pops"
     PopsList = os.listdir(PopsDir)
