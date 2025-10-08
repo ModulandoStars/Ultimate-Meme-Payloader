@@ -8,10 +8,18 @@ ini = ConfigParser()
 RootDir = os.getcwd()
 PopsList = ""
 
+def ReadSettings():
+    ini.read(RootDir + "\\settings.ini")
+    config 
+
+    return 
 
 
 # i should make another script so this can be the main script... oh well..
 def UpdatePopDatabase():
+    if os.path.exists(RootDir + "\\pops") == False:
+        print('no pops folder was detected, please create a "pops" directory on the root folder...')
+        return "NoPopsFolder"
     if os.path.exists(RootDir + "\\database.json") == True:
         os.remove(RootDir + "\\database.json")
     global PopsList
@@ -28,21 +36,22 @@ def UpdatePopDatabase():
             print("reading: '" + iniDir + "'" )
             ini.read(iniDir)    
         else:
-            print(iniDir+" dosen't exist, skipping")
+            print(iniDir + " dosen't exist, skipping...")
             PopsAmnt -= 1
             continue
         
         PopInfo = ini["Settings"]
         
-        PopDb.add({
+        PopId = PopDb.add({
             "name":PopsList[PopsAmnt-1],
             "imageDirectory":PopInfo['ImageDir'],
             "soundDirectory":PopInfo['soundDir'],
             "time":int(float(PopInfo['time'])) 
-            })   
+            })
+        print(PopId)   
           
         PopsAmnt -= 1
 
     return PopsList
 
-UpdatePopDatabase()
+#UpdatePopDatabase()
