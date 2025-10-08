@@ -1,0 +1,22 @@
+import tkinter as tk    # UI shenanegains (although DearPyGui sounds way better to use, but too bad! [05/10/2025])
+import os               # File and System Shenanegains
+import backend as backend
+
+# TODO: separate frontent with backend :) [06/10/2025 (midnight)]
+
+PopsList = backend.UpdatePopDatabase()
+print(PopsList)
+
+
+root = tk.Tk()
+
+root.title("uwu")
+root.geometry('640x480')
+
+#StartProgram
+
+
+
+
+
+root.mainloop()
