@@ -12,7 +12,7 @@ PopsList = ""
 
 # i should make another script so this can be the main script... oh well..
 def UpdatePopDatabase():
-    #TODO Add if database exists
+    if os.path.exists(RootDir + "\\database.json") == True:
         os.remove(RootDir + "\\database.json")
     global PopsList
     PopsDir = RootDir + "//pops"
@@ -24,19 +24,25 @@ def UpdatePopDatabase():
     while PopsAmnt > 0:
         iniDir = RootDir + "\\pops\\" + PopsList[PopsAmnt-1] + "\\settings.ini"
         
-        print("IniDir is: '" + iniDir + "'" )
-        try:
+        if os.path.exists(iniDir) == True:
+            print("reading: '" + iniDir + "'" )
             ini.read(iniDir)    
-        except FileNotFoundError:
-            print("settings.ini dosen't exist, skipping")
+        else:
+            print(iniDir+" dosen't exist, skipping")
             PopsAmnt -= 1
             continue
         
         PopInfo = ini["Settings"]
-        print(PopInfo['picDir'])
         
-        PopDb.add({"name":PopsList[PopsAmnt-1], "pos":PopsAmnt})
-
+        PopDb.add({
+            "name":PopsList[PopsAmnt-1],
+            "imageDirectory":PopInfo['ImageDir'],
+            "soundDirectory":PopInfo['soundDir'],
+            "time":int(float(PopInfo['time'])) 
+            })   
+          
         PopsAmnt -= 1
 
     return PopsList
+
+UpdatePopDatabase()
