@@ -10,7 +10,6 @@ PopsList = ""
 
 def ReadSettings():
     ini.read(RootDir + "\\settings.ini")
-    config 
 
     return 
 
