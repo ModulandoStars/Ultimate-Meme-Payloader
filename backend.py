@@ -9,7 +9,7 @@ RootDir = os.getcwd()
 PopsList = ""
 DatabaseFile = "\\database.json"
 PopsJson = "\\popsList.json"
-
+a
 
 def ReadSettings():
     ini.read(RootDir + "\\settings.ini")
