@@ -21,11 +21,14 @@ def UpdatePopDatabase():
         print('no pops folder was detected, please create a "pops" directory on the root folder...')
         return "NoPopsFolder"
     
-    elif os.path.exists(RootDir + DatabaseFile) == True:
-        os.remove(RootDir + DatabaseFile)
+    if os.path.exists(RootDir + "\\etc") == True:
+        if os.path.exists(RootDir + DatabaseFile) == True:
+            os.remove(RootDir + DatabaseFile)
     
-    elif os.path.exists(RootDir + PopsJson) == True:
-        os.remove(RootDir + PopsJson)
+        elif os.path.exists(RootDir + PopsJson) == True:
+            os.remove(RootDir + PopsJson)
+    else:
+        os.mkdir(RootDir+"\\etc")
     
     global PopsList
     PopsDir = RootDir + "//pops"
