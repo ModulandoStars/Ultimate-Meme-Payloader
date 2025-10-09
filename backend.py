@@ -7,12 +7,11 @@ ini = ConfigParser()
 
 RootDir = os.getcwd()
 PopsList = ""
-DatabaseFile = "\\database.json"
-PopsJson = "\\popsList.json"
-a
+DatabaseFile = "\\etc\\database.json"
+PopsJson = "\\etc\\popsList.json"
 
 def ReadSettings():
-    ini.read(RootDir + "\\settings.ini")
+    ini.read(RootDir + "\\etc\\settings.ini")
     return 
 
 
@@ -36,8 +35,6 @@ def UpdatePopDatabase():
     FinalPopList = db.getDb(RootDir + PopsJson)
     PopIdList = []
 
-
-    #TODO: make database work with individual pop settings [06/10/2025 (midnight)]
     while PopsAmnt > 0:
         iniDir = RootDir + "\\pops\\" + PopsList[PopsAmnt-1] + "\\settings.ini"
         
