@@ -8,6 +8,8 @@ ini = ConfigParser()
 RootDir = os.getcwd()
 PopsList = ""
 
+
+
 def ReadSettings():
     ini.read(RootDir + "\\settings.ini")
 
@@ -19,14 +21,19 @@ def UpdatePopDatabase():
     if os.path.exists(RootDir + "\\pops") == False:
         print('no pops folder was detected, please create a "pops" directory on the root folder...')
         return "NoPopsFolder"
-    if os.path.exists(RootDir + "\\database.json") == True:
+    elif os.path.exists(RootDir + "\\database.json") == True:
         os.remove(RootDir + "\\database.json")
+    elif os.path.exists(RootDir + "\\popList.json") == True:
+        os.remove(RootDir + "\\popList.json")
     global PopsList
     PopsDir = RootDir + "//pops"
     PopsList = os.listdir(PopsDir)
     PopsAmnt = len(PopsList)
     PopDb = db.getDb(RootDir + '\\database.json')
-    
+    FinalPopList = db.getDb(RootDir + "\\popList.json")
+    PopIdList = []
+
+
     #TODO: make database work with individual pop settings [06/10/2025 (midnight)]
     while PopsAmnt > 0:
         iniDir = RootDir + "\\pops\\" + PopsList[PopsAmnt-1] + "\\settings.ini"
@@ -48,10 +55,16 @@ def UpdatePopDatabase():
             "time":             int(float(PopInfo['time'])),
             })
         print(PopsList[PopsAmnt-1] + " has the if of: " + str(PopId))   
-          
+
+        PopIdList.insert(0, PopId)  
         PopsAmnt -= 1
 
-    return PopsList
+    FinalPopList.add({
+        "type": "pops",
+        "list": PopIdList
+    })
+
+    return str(PopIdList) + " converted to db: " + str(FinalPopList)
 
 if __name__ == '__main__':
     print('This is running separetely!!!')
