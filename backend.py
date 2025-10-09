@@ -43,14 +43,17 @@ def UpdatePopDatabase():
         
         PopId = PopDb.add({
             "name":PopsList[PopsAmnt-1],
-            "imageDirectory":PopInfo['ImageDir'],
-            "soundDirectory":PopInfo['soundDir'],
-            "time":int(float(PopInfo['time'])) 
+            "imageDirectory":   PopInfo['ImageDir'],
+            "soundDirectory":   PopInfo['soundDir'],
+            "time":             int(float(PopInfo['time'])),
             })
-        print(PopId)   
+        print(PopsList[PopsAmnt-1] + " has the if of: " + str(PopId))   
           
         PopsAmnt -= 1
 
     return PopsList
 
-#UpdatePopDatabase()
+if __name__ == '__main__':
+    print('This is running separetely!!!')
+    teste = UpdatePopDatabase()
+    print(teste)

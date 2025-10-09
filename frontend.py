@@ -1,4 +1,7 @@
 import tkinter as tk    # UI shenanegains (although DearPyGui sounds way better to use, but too bad! [05/10/2025])
+# I will change the UI to be Qt because I discovered it's way easier to make UI than hard coding things [08/10/2025]
+
+
 import os               # File and System Shenanegains
 import backend as backend
 

@@ -5,7 +5,11 @@
          "imageDirectory": "sexo",
          "soundDirectory": "sexo",
          "time": 50,
-         "id": 142685688695848120
+         "test": [
+            "a",
+            "bawawaw"
+         ],
+         "id": 118335691604277335
       }
    ]
 }

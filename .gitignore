@@ -1,2 +1,4 @@
 pops/*
 __pycache__/
+database.json
+
