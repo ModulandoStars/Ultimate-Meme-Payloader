@@ -1,4 +1,5 @@
 pops/*
-__pycache__/
+__pycache__/*
 database.json
+popsList.json
 

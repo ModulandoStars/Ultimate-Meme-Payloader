@@ -7,12 +7,12 @@ ini = ConfigParser()
 
 RootDir = os.getcwd()
 PopsList = ""
-
+DatabaseFile = "\\database.json"
+PopsJson = "\\popsList.json"
 
 
 def ReadSettings():
     ini.read(RootDir + "\\settings.ini")
-
     return 
 
 
@@ -21,16 +21,19 @@ def UpdatePopDatabase():
     if os.path.exists(RootDir + "\\pops") == False:
         print('no pops folder was detected, please create a "pops" directory on the root folder...')
         return "NoPopsFolder"
-    elif os.path.exists(RootDir + "\\database.json") == True:
-        os.remove(RootDir + "\\database.json")
-    elif os.path.exists(RootDir + "\\popList.json") == True:
-        os.remove(RootDir + "\\popList.json")
+    
+    elif os.path.exists(RootDir + DatabaseFile) == True:
+        os.remove(RootDir + DatabaseFile)
+    
+    elif os.path.exists(RootDir + PopsJson) == True:
+        os.remove(RootDir + PopsJson)
+    
     global PopsList
     PopsDir = RootDir + "//pops"
     PopsList = os.listdir(PopsDir)
     PopsAmnt = len(PopsList)
-    PopDb = db.getDb(RootDir + '\\database.json')
-    FinalPopList = db.getDb(RootDir + "\\popList.json")
+    PopDb = db.getDb(RootDir + DatabaseFile)
+    FinalPopList = db.getDb(RootDir + PopsJson)
     PopIdList = []
 
 
