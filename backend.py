@@ -5,69 +5,68 @@ from pysondb import db                   # for ACTUAL database!!!
 
 ini = ConfigParser()
 
-RootDir = os.getcwd()
-PopsList = ""
-DatabaseFile = "\\etc\\database.json"
-PopsJson = "\\etc\\popsList.json"
+RootDirectory = os.getcwd()
+PopsInformationDatabase = "\\etc\\database.json"
+PopsIdentificationDatabase = "\\etc\\PopsFolderList.json"
 
 def ReadSettings():
-    ini.read(RootDir + "\\etc\\settings.ini")
+    ini.read(RootDirectory + "\\etc\\settings.ini")
     return 
 
 
 # i should make another script so this can be the main script... oh well..
 def UpdatePopDatabase():
-    if os.path.exists(RootDir + "\\pops") == False:
+    if os.path.exists(RootDirectory + "\\pops") == False:
         print('no pops folder was detected, please create a "pops" directory on the root folder...')
         return "NoPopsFolder"
     
-    if os.path.exists(RootDir + "\\etc") == True:
-        if os.path.exists(RootDir + DatabaseFile) == True:
-            os.remove(RootDir + DatabaseFile)
+    if os.path.exists(RootDirectory + "\\etc") == True:
+        if os.path.exists(RootDirectory + PopsInformationDatabase) == True:
+            os.remove(RootDirectory + PopsInformationDatabase)
     
-        elif os.path.exists(RootDir + PopsJson) == True:
-            os.remove(RootDir + PopsJson)
+        elif os.path.exists(RootDirectory + PopsIdentificationDatabase) == True:
+            os.remove(RootDirectory + PopsIdentificationDatabase)
     else:
-        os.mkdir(RootDir+"\\etc")
+        os.mkdir(RootDirectory+"\\etc")
     
-    global PopsList
-    PopsDir = RootDir + "//pops"
-    PopsList = os.listdir(PopsDir)
-    PopsAmnt = len(PopsList)
-    PopDb = db.getDb(RootDir + DatabaseFile)
-    FinalPopList = db.getDb(RootDir + PopsJson)
-    PopIdList = []
+    global PopsFolderList
+    PopsDirectory = RootDirectory + "//pops"
+    PopsFolderList = os.listdir(PopsDirectory)
+    PopsAmount = len(PopsFolderList)
+    PopsDatabase = db.getDb(RootDirectory + PopsInformationDatabase)
+    PopsIdentificationListDatabase = db.getDb(RootDirectory + PopsIdentificationDatabase)
+    PopsIdentificationList = []
 
-    while PopsAmnt > 0:
-        iniDir = RootDir + "\\pops\\" + PopsList[PopsAmnt-1] + "\\settings.ini"
+    while PopsAmount > 0:
+        iniDir = RootDirectory + "\\pops\\" + PopsFolderList[PopsAmount-1] + "\\settings.ini"
         
         if os.path.exists(iniDir) == True:
             print("reading: '" + iniDir + "'" )
             ini.read(iniDir)    
         else:
             print(iniDir + " dosen't exist, skipping...")
-            PopsAmnt -= 1
+            PopsAmount -= 1
             continue
         
         PopInfo = ini["Settings"]
         
-        PopId = PopDb.add({
-            "name":PopsList[PopsAmnt-1],
+        PopId = PopsDatabase.add({
+            "name":PopsFolderList[PopsAmount-1],
             "imageDirectory":   PopInfo['ImageDir'],
             "soundDirectory":   PopInfo['soundDir'],
             "time":             int(float(PopInfo['time'])),
             })
-        print(PopsList[PopsAmnt-1] + " has the if of: " + str(PopId))   
+        print(PopsFolderList[PopsAmount-1] + " has the if of: " + str(PopId))   
 
-        PopIdList.insert(0, PopId)  
-        PopsAmnt -= 1
+        PopsIdentificationList.insert(0, PopId)  
+        PopsAmount -= 1
 
-    FinalPopList.add({
+    PopsIdentificationListDatabase.add({
         "type": "pops",
-        "list": PopIdList
+        "list": PopsIdentificationList
     })
 
-    return str(PopIdList) + " converted to db: " + str(FinalPopList)
+    return str(PopsIdentificationList) + " converted to db: " + str(PopsIdentificationListDatabase)
 
 if __name__ == '__main__':
     print('This is running separetely!!!')
