@@ -1,4 +1,10 @@
 pops/*
 __pycache__/*
 etc/*
+
 environments/*
+
+Include/*
+Lib/*
+Scripts/*
+pyvenv.cfg
