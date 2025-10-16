@@ -11,18 +11,36 @@ import backend as backend
 
 app = QApplication(sys.argv)
 
-class Window(QtWidgets.QMainWindow):
+PopupListUI = 'PopupList.ui'
+class PopupList(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
-        self.ui = uic.loadUi('MainMenu.ui', self)
+        self.ui = uic.loadUi(PopupListUI, self)
     
-        print(self.ui.lineEdit.text())
+        #print(self.ui.lineEdit.text())
+
+
+
+MainMenuUI = 'MainMenu.ui'
+class MainMenu(QtWidgets.QMainWindow):
+    def teste():
+        print('a')
+    
+    def __init__(self):
+        super().__init__()
+        self.ui = uic.loadUi(MainMenuUI, self)
+
+        self.PayloadsButton.clicked.connect(PopupList().show())
+    
+        #print(self.ui.lineEdit.text())
+    
+    
+
 
 if __name__ == '__main__':
-    mainWindow = Window()
-    mainWindow.show()
-    
-    
+    MainMenu().show()
+    #PopupList().show()
+
     PopsList = backend.UpdatePopDatabase()
     print(PopsList)
     

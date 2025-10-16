@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>566</width>
-    <height>208</height>
+    <height>203</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Window</string>
   </property>
-  <widget class="QPushButton" name="StartBttn">
+  <widget class="QPushButton" name="StartButton">
    <property name="geometry">
     <rect>
      <x>130</x>
@@ -26,7 +26,7 @@
     <string>Start</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="PayloadsBttn">
+  <widget class="QPushButton" name="PayloadsButton">
    <property name="geometry">
     <rect>
      <x>250</x>
@@ -39,7 +39,7 @@
     <string>Payloads</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="SettingsBttn">
+  <widget class="QPushButton" name="SettingsButton">
    <property name="geometry">
     <rect>
      <x>370</x>
@@ -52,7 +52,7 @@
     <string>Settings</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="HelpBttn">
+  <widget class="QPushButton" name="HelpButton">
    <property name="geometry">
     <rect>
      <x>480</x>
@@ -63,6 +63,38 @@
    </property>
    <property name="text">
     <string>Help</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>310</x>
+     <y>140</y>
+     <width>241</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="cursor">
+    <cursorShape>ArrowCursor</cursorShape>
+   </property>
+   <property name="text">
+    <string>Made by ModulandoStars &amp; friends with love</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>50</y>
+     <width>211</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>[LOGO]</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
    </property>
   </widget>
  </widget>
