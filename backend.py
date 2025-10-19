@@ -41,7 +41,7 @@ class PopupDatabase:
                 os.remove(RootDirectory + PopsInformationDatabaseJson)
         
             elif os.path.exists(RootDirectory + PopsIdentificationDatabaseJson) == True:
-                print( os.path.exists(RootDirectory + PopsIdentificationDatabaseJson) )
+                print('[PopupDatabase.Update] ' +  os.path.exists(RootDirectory + PopsIdentificationDatabaseJson) )
                 os.remove(RootDirectory + PopsIdentificationDatabaseJson)
         else:
             os.mkdir(RootDirectory+"\\etc")
@@ -59,10 +59,10 @@ class PopupDatabase:
             iniDir = RootDirectory + "\\pops\\" + PopsFolderList[PopsAmount-1] + "\\settings.ini"
             
             if os.path.exists(iniDir) == True:
-                print("reading: '" + iniDir + "'" )
+                print('[PopupDatabase.Update] ' + "reading: '" + iniDir + "'" )
                 ini.read(iniDir)    
             else:
-                print(iniDir + " dosen't exist, skipping...")
+                print('[PopupDatabase.Update] ' + iniDir + " dosen't exist, skipping...")
                 PopsAmount -= 1
                 continue
             
@@ -74,7 +74,7 @@ class PopupDatabase:
                 "soundDirectory":   PopInfo['soundDir'],
                 "time":             int(float(PopInfo['time'])),
                 })
-            print(PopsFolderList[PopsAmount-1] + " has the if of: " + str(PopId))   
+            print('[PopupDatabase.Update] ' + PopsFolderList[PopsAmount-1] + " has the if of: " + str(PopId))   
 
             PopsIdentificationList.insert(0, PopId)  
             PopsAmount -= 1
@@ -84,7 +84,7 @@ class PopupDatabase:
             "list": PopsIdentificationList
         })
 
-        print( str(PopsIdentificationList) + " converted to db: " + str(PopsIdentificationListDatabase) ) 
+        print('[PopupDatabase.Update] ' + str(PopsIdentificationList) + " converted to db: " + str(PopsIdentificationListDatabase) ) 
         return PopsIdentificationList
 
     def Read(IdentificationToFind=None):
@@ -94,20 +94,44 @@ class PopupDatabase:
         
         if IdentificationToFind is None:
             PopsIdsList = PopsIdentificationListDatabase.getByQuery({"type":"pops"})
-            print(PopsIdsList)
-            print(str(type(PopsIdsList)) + " / " + str(len(PopsIdsList)) )
+            print('[PopupDatabase.Read] ' + str(PopsIdsList))
+            print('[PopupDatabase.Read] ' + str(type(PopsIdsList)) + " / " + str(len(PopsIdsList)) )
         
-        elif type(IdentificationToFind) != "int":
+        elif isinstance(IdentificationToFind, int) == False:
             error = "ID isn't an integer."
-            print(error)
+            print('[PopupDatabase.Read] ' + error + " value " + type(IdentificationToFind) + " ->" + str(IdentificationToFind))
             return error
         
         elif int(IdentificationToFind) != 0:
             PopsDatabase.getById(IdentificationToFind)
-              
+            print('[PopupDatabase.Read] Found ' +  str(IdentificationToFind) + ' -> ' + str(PopsDatabase.getById(IdentificationToFind)))
+            return PopsDatabase.getById(IdentificationToFind)
         else:
+            print('[PopupDatabase.Read] ' + "Not valid response, please use an integer!")
             return "Not valid response, please use an integer!"
         
+    def ReadName(IdentificationToFind=None):
+        PopsDatabase = db.getDb(RootDirectory + PopsInformationDatabaseJson)
+        PopsIdentificationListDatabase = db.getDb(RootDirectory + PopsIdentificationDatabaseJson)
+        
+        
+        if IdentificationToFind is None:
+            PopsIdsList = PopsIdentificationListDatabase.getByQuery({"type":"pops"})
+            print('[PopupDatabase.Read] ' + str(PopsIdsList))
+            print('[PopupDatabase.Read] ' + str(type(PopsIdsList)) + " / " + str(len(PopsIdsList)) )
+        
+        elif isinstance(IdentificationToFind, str) == False:
+            error = "ID isn't an string."
+            print('[PopupDatabase.Read] ' + error + " value " + type(IdentificationToFind) + " ->" + str(IdentificationToFind))
+            return error
+        
+        elif int(IdentificationToFind) != "":
+            PopsDatabase.getById(IdentificationToFind)
+            print('[PopupDatabase.Read] Found ' +  str(IdentificationToFind) + ' -> ' + str(PopsDatabase.getById(IdentificationToFind)))
+            return PopsDatabase.getById(IdentificationToFind)
+        else:
+            print('[PopupDatabase.Read] ' + "Not valid response, please use an integer!")
+            return "Not valid response, please use an integer!"
 
 
 

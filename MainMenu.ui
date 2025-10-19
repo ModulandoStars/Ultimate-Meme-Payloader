@@ -65,7 +65,7 @@
     <string>Help</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="Author">
    <property name="geometry">
     <rect>
      <x>310</x>
@@ -81,7 +81,7 @@
     <string>Made by ModulandoStars &amp; friends with love</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_2">
+  <widget class="QLabel" name="genericLogo">
    <property name="geometry">
     <rect>
      <x>50</x>

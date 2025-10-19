@@ -7,20 +7,35 @@ from PyQt6.QtWidgets import QApplication
 from PyQt6 import QtWidgets, uic
 
 import os               # File and System Shenanegains
-import backend as backend
+from backend import PopupDatabase
 
 app = QApplication(sys.argv)
 
+
+    
+
+# PopupList / Popup Manager
 PopupListUI = 'PopupList.ui'
 class PopupList(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         self.ui = uic.loadUi(PopupListUI, self)
-    
-        #print(self.ui.lineEdit.text())
+        print(self)
+        
 
 
 
+        self.ExitButton.clicked.connect(lambda:self.close())
+        self.PopupListWidget.addItems(PopupNameList)
+        self.PopupListWidget.itemActivated.connect(self.selectionChanged)
+
+        
+    def selectionChanged(self, item):
+        print(self.PopupListWidget.selectedItems())
+        print(item.text())
+
+
+# Main Menu
 MainMenuUI = 'MainMenu.ui'
 class MainMenu(QtWidgets.QMainWindow):
     def teste():
@@ -30,20 +45,39 @@ class MainMenu(QtWidgets.QMainWindow):
         super().__init__()
         self.ui = uic.loadUi(MainMenuUI, self)
 
-        self.PayloadsButton.clicked.connect(PopupList().show())
+        self.PayloadsButton.clicked.connect(self.OpenPopupList)
     
         #print(self.ui.lineEdit.text())
-    
+
+    def OpenPopupList(self):
+        PopupManager = PopupList()
+        PopupManager.show()
     
 
 
 if __name__ == '__main__':
-    MainMenu().show()
-    #PopupList().show()
-
-    PopsList = backend.UpdatePopDatabase()
+    global PopsList
+    PopsList = PopupDatabase.Update()
+    PopsListIDConvertion = len(PopsList)
     print(PopsList)
+
+    PopupNameList = []
+    while PopsListIDConvertion > 0:
+        print(PopsList[PopsListIDConvertion-1])
+        print(type(PopsList[PopsListIDConvertion-1]))
+        IndividualPopupInfomation = PopupDatabase.Read(PopsList[PopsListIDConvertion-1])
+        print(IndividualPopupInfomation["name"])
+        PopupNameList.insert(0, IndividualPopupInfomation["name"])
+        
+        PopsListIDConvertion -= 1
+    print(PopupNameList)
+
+
     
+    print(PopupDatabase.Read())
+
+
+    MainMenu().show()
     sys.exit(app.exec())
 
 
