@@ -120,6 +120,8 @@ class PopupDatabase:
             print('[PopupDatabase.Read] ' + str(PopsIdsList))
             print('[PopupDatabase.Read] ' + str(type(PopsIdsList)) + " / " + str(len(PopsIdsList)) )
         
+        # TODO: Add check if string go to 'self.Read()' !!!!
+
         elif isinstance(IdentificationToFind, str) == False:
             error = "ID isn't an string."
             print('[PopupDatabase.Read] ' + error + " value " + type(IdentificationToFind) + " ->" + str(IdentificationToFind))
