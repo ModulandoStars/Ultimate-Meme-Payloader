@@ -125,10 +125,10 @@ class PopupDatabase:
             print('[PopupDatabase.Read] ' + error + " value " + type(IdentificationToFind) + " ->" + str(IdentificationToFind))
             return error
         
-        elif int(IdentificationToFind) != "":
-            PopsDatabase.getById(IdentificationToFind)
-            print('[PopupDatabase.Read] Found ' +  str(IdentificationToFind) + ' -> ' + str(PopsDatabase.getById(IdentificationToFind)))
-            return PopsDatabase.getById(IdentificationToFind)
+        elif str(IdentificationToFind) != "":
+            PopsDatabase.getByQuery({"name":IdentificationToFind})
+            print('[PopupDatabase.Read] Found ' +  str(IdentificationToFind) + ' -> ' + str(PopsDatabase.getByQuery({"name":IdentificationToFind})))
+            return PopsDatabase.getByQuery({"name":IdentificationToFind})
         else:
             print('[PopupDatabase.Read] ' + "Not valid response, please use an integer!")
             return "Not valid response, please use an integer!"

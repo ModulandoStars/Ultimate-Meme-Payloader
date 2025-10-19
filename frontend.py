@@ -27,12 +27,15 @@ class PopupList(QtWidgets.QMainWindow):
 
         self.ExitButton.clicked.connect(lambda:self.close())
         self.PopupListWidget.addItems(PopupNameList)
-        self.PopupListWidget.itemActivated.connect(self.selectionChanged)
+        self.PopupListWidget.itemActivated.connect(self.PopupSelectionChanged)
 
         
-    def selectionChanged(self, item):
-        print(self.PopupListWidget.selectedItems())
-        print(item.text())
+    def PopupSelectionChanged(self, item):
+        SelectedPopup = item.text()
+        SelectedPopup = PopupDatabase.ReadName(SelectedPopup)
+        print(str(SelectedPopup) + " / " + str(type(SelectedPopup)))
+        #self.PopupName.setText(SelectedPopup["name"])
+
 
 
 # Main Menu
