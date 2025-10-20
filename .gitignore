@@ -2,6 +2,9 @@ pops/*
 __pycache__/*
 etc/*.json
 
+build/*
+dist/*
+*.spec
 
 environments/*
 
