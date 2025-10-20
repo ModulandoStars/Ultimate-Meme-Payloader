@@ -9,7 +9,7 @@ ini = ConfigParser()
 RootDirectory = os.getcwd()
 PopsInformationDatabaseJson = "\\etc\\database.json"
 PopsIdentificationDatabaseJson = "\\etc\\PopsFolderList.json"
-PopsDirectory = RootDirectory + "//pops"
+PopsDirectory = RootDirectory + "\\pops"
 PopsFolderList = os.listdir(PopsDirectory)
 
 
@@ -29,7 +29,8 @@ class PopupDatabase:
         #global PopsIdentificationListDatabase
         PopsAmount = len(PopsFolderList)
         
-
+        # TODO: add fail checks, like if image/sound/time file dosen't exist, 
+        # preferebly another function that this calls at the end of the function.
 
         if os.path.exists(RootDirectory + "\\pops") == False:
             print('no pops folder was detected, please create a "pops" directory on the root folder...')
@@ -56,7 +57,8 @@ class PopupDatabase:
         PopsIdentificationList = []
 
         while PopsAmount > 0:
-            iniDir = RootDirectory + "\\pops\\" + PopsFolderList[PopsAmount-1] + "\\settings.ini"
+            IndividualPopupDirectory = PopsDirectory +"\\"+ PopsFolderList[PopsAmount-1] + "\\"
+            iniDir = PopsDirectory +"\\"+ PopsFolderList[PopsAmount-1] + "\\settings.ini"
             
             if os.path.exists(iniDir) == True:
                 print('[PopupDatabase.Update] ' + "reading: '" + iniDir + "'" )
@@ -67,11 +69,12 @@ class PopupDatabase:
                 continue
             
             PopInfo = ini["Settings"]
-            
+
+            # Popup Info 
             PopId = PopsDatabase.add({
-                "name":PopsFolderList[PopsAmount-1],
-                "imageDirectory":   PopInfo['ImageDir'],
-                "soundDirectory":   PopInfo['soundDir'],
+                "name":             PopsFolderList[PopsAmount-1],
+                "imageDirectory":   IndividualPopupDirectory + PopInfo['ImageDir'],
+                "soundDirectory":   IndividualPopupDirectory + PopInfo['soundDir'],
                 "time":             int(float(PopInfo['time'])),
                 })
             print('[PopupDatabase.Update] ' + PopsFolderList[PopsAmount-1] + " has the if of: " + str(PopId))   
@@ -103,9 +106,9 @@ class PopupDatabase:
             return error
         
         elif int(IdentificationToFind) != 0:
-            PopsDatabase.getById(IdentificationToFind)
+            SearchById =PopsDatabase.getById(IdentificationToFind)
             print('[PopupDatabase.Read] Found ' +  str(IdentificationToFind) + ' -> ' + str(PopsDatabase.getById(IdentificationToFind)))
-            return PopsDatabase.getById(IdentificationToFind)
+            return SearchById
         else:
             print('[PopupDatabase.Read] ' + "Not valid response, please use an integer!")
             return "Not valid response, please use an integer!"
@@ -120,7 +123,9 @@ class PopupDatabase:
             print('[PopupDatabase.Read] ' + str(PopsIdsList))
             print('[PopupDatabase.Read] ' + str(type(PopsIdsList)) + " / " + str(len(PopsIdsList)) )
         
-        # TODO: Add check if string go to 'self.Read()' !!!!
+        elif isinstance(IdentificationToFind, int) == True:
+            print("[PopupDatabase.Read] ReadName isn't the correct way to search a popup, in case of integers/ids use the Read function!")
+            PopupDatabase.Read(IdentificationToFind)
 
         elif isinstance(IdentificationToFind, str) == False:
             error = "ID isn't an string."
@@ -128,12 +133,12 @@ class PopupDatabase:
             return error
         
         elif str(IdentificationToFind) != "":
-            PopsDatabase.getByQuery({"name":IdentificationToFind})
+            searchName = PopsDatabase.getByQuery({"name":IdentificationToFind})
             print('[PopupDatabase.Read] Found ' +  str(IdentificationToFind) + ' -> ' + str(PopsDatabase.getByQuery({"name":IdentificationToFind})))
-            return PopsDatabase.getByQuery({"name":IdentificationToFind})
+            return searchName
         else:
-            print('[PopupDatabase.Read] ' + "Not valid response, please use an integer!")
-            return "Not valid response, please use an integer!"
+            print('[PopupDatabase.Read] ' + "Not valid response, please use an string!")
+            return "Not valid response, please use an string!"
 
 
 

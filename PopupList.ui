@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Payload Manager</string>
   </property>
   <widget class="QLabel" name="PopupName">
    <property name="geometry">
@@ -19,7 +19,7 @@
      <x>190</x>
      <y>10</y>
      <width>381</width>
-     <height>51</height>
+     <height>41</height>
     </rect>
    </property>
    <property name="font">
@@ -84,6 +84,35 @@
     <font>
      <pointsize>11</pointsize>
     </font>
+   </property>
+  </widget>
+  <widget class="QLabel" name="PopupImagePreview">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>60</y>
+     <width>351</width>
+     <height>301</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="PlaybackControlButton">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>400</y>
+     <width>61</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Play</string>
    </property>
   </widget>
  </widget>

@@ -3,8 +3,12 @@
 # I take it back, it looks way harder than I thought lmao [09/10/2025]
 import sys
 
-from PyQt6.QtWidgets import QApplication
-from PyQt6 import QtWidgets, uic
+from PyQt6.QtWidgets    import QApplication
+from PyQt6              import QtWidgets, uic
+from PyQt6.QtGui        import QPixmap
+from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
+from PyQt6.QtCore       import QUrl
+
 
 import os               # File and System Shenanegains
 from backend import PopupDatabase
@@ -22,27 +26,48 @@ class PopupList(QtWidgets.QMainWindow):
         self.ui = uic.loadUi(PopupListUI, self)
         print(self)
         
-
-
-
+        self.AudioPlayer = QMediaPlayer()
+        self.AudioOutput = QAudioOutput()
+        self.AudioPlayer.setAudioOutput(self.AudioOutput)
+        
         self.ExitButton.clicked.connect(lambda:self.close())
+        
         self.PopupListWidget.addItems(PopupNameList)
         self.PopupListWidget.itemActivated.connect(self.PopupSelectionChanged)
+        self.PlaybackControlButton.clicked.connect(self.ControlAudio)
 
+    def ControlAudio(self):
+        self.PlayingAudio = self.AudioPlayer.playbackState() == QMediaPlayer.PlaybackState.PlayingState
+        if self.PlayingAudio == False:
+            self.AudioPlayer.play()
+            self.PlaybackControlButton.setText('Stop')
+        elif self.PlayingAudio == True:
+            self.AudioPlayer.stop()
+            self.PlaybackControlButton.setText('Play')
         
     def PopupSelectionChanged(self, item):
+        self.AudioReady = 0
         SelectedPopup = item.text()
         SelectedPopup = PopupDatabase.ReadName(SelectedPopup)
         print(str(SelectedPopup) + " / " + str(type(SelectedPopup)))
-        #self.PopupName.setText(SelectedPopup["name"])
+        SelectedPopup = SelectedPopup[0]
+        PopupImage = QPixmap(SelectedPopup["imageDirectory"])
+        PopupSound = self.AudioPlayer.setSource(QUrl.fromLocalFile(SelectedPopup["soundDirectory"]))
+        self.AudioReady = 1
+        
+        self.PopupName.setText(SelectedPopup["name"])
+
+        
+        self.PopupImagePreview.setPixmap(PopupImage)
+
 
 
 
 # Main Menu
 MainMenuUI = 'MainMenu.ui'
 class MainMenu(QtWidgets.QMainWindow):
-    def teste():
-        print('a')
+    # def teste():
+    #     print('a')
     
     def __init__(self):
         super().__init__()
@@ -60,6 +85,9 @@ class MainMenu(QtWidgets.QMainWindow):
 
 if __name__ == '__main__':
     global PopsList
+
+    #TODO: make update database optional and not obrigatory when running the script!
+
     PopsList = PopupDatabase.Update()
     PopsListIDConvertion = len(PopsList)
     print(PopsList)
