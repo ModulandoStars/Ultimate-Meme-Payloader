@@ -1,6 +1,7 @@
 pops/*
 __pycache__/*
-etc/*
+etc/*.json
+
 
 environments/*
 

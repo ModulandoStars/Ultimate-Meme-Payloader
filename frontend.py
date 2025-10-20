@@ -52,7 +52,10 @@ class PopupList(QtWidgets.QMainWindow):
         print(str(SelectedPopup) + " / " + str(type(SelectedPopup)))
         SelectedPopup = SelectedPopup[0]
         PopupImage = QPixmap(SelectedPopup["imageDirectory"])
-        PopupSound = self.AudioPlayer.setSource(QUrl.fromLocalFile(SelectedPopup["soundDirectory"]))
+        if os.path.exists(SelectedPopup["soundDirectory"]):
+            self.AudioPlayer.setSource(QUrl.fromLocalFile(SelectedPopup["soundDirectory"]))
+        else:
+            print('No audio file is present')
         self.AudioReady = 1
         
         self.PopupName.setText(SelectedPopup["name"])
