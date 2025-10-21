@@ -24,7 +24,11 @@ noImage = "./etc/icons/noImage.png"
 # PopupList / Popup Manager
 # 351x301
 PopupListUI = 'PopupList.ui'
-class PopupList(QtWidgets.QMainWindow):
+class PopupList(QtWidgets.QMainWindow):  
+    playbackPlay = ""
+    playbackStop = ""
+    
+    
     def __init__(self):
         super().__init__()
         self.ui = uic.loadUi(PopupListUI, self)
@@ -42,15 +46,29 @@ class PopupList(QtWidgets.QMainWindow):
         self.PlaybackControlButton.setEnabled(False)
         self.PlaybackControlButton.clicked.connect(self.ControlAudio)
 
+        self.localizeUI()
+
+    def localizeUI(self):
+        #print(localization.translate('Author', 'MainMenu'))
+        self.setWindowTitle(        localization.translate('WindowTitle', 'PayloadsManager'))
+        self.CreatePopup.setText(   localization.translate('CreatePopup', 'PayloadsManager'))
+        self.DeletePopup.setText(   localization.translate('DeletePopup', 'PayloadsManager'))
+        self.ExitButton.setText(    localization.translate('Exit', 'PayloadsManager'))
+        
+        playbackPlay =              localization.translate('PlaybackPlay', 'PayloadsManager')
+        playbackStop =              localization.translate('PlaybackStop', 'PayloadsManager')
+        
+        self.PopupName.setText(     localization.translate('WindowTitle', 'PayloadsManager'))
+
     def ControlAudio(self):
         self.PlayingAudio = self.AudioPlayer.playbackState() == QMediaPlayer.PlaybackState.PlayingState
         if self.AudioReady == 1:
             if self.PlayingAudio == False:
                 self.AudioPlayer.play()
-                self.PlaybackControlButton.setText('Stop')
+                self.PlaybackControlButton.setText(self.playbackStop)
             elif self.PlayingAudio == True:
                 self.AudioPlayer.stop()
-                self.PlaybackControlButton.setText('Play')
+                self.PlaybackControlButton.setText(self.playbackPlay)
         else:
             print('[Popup Manager] Audio isnt ready, does the file exist?')
         
@@ -112,13 +130,17 @@ class MainMenu(QtWidgets.QMainWindow):
 
     def localizeUI(self):
         #print(localization.translate('Author', 'MainMenu'))
-        self.Author.setText(localization.translate('Author', 'MainMenu'))
-    
+        self.setWindowTitle(            localization.translate('WindowTitle', 'MainMenu')   )
+        self.Author.setText(            localization.translate('Author', 'MainMenu')        )
+        self.StartButton.setText(       localization.translate('StartButton', 'MainMenu')   )
+        self.PayloadsButton.setText(    localization.translate('PayloadsButton', 'MainMenu'))
+        self.SettingsButton.setText(    localization.translate('SettingsButton', 'MainMenu'))
+        self.HelpButton.setText(        localization.translate('HelpButton', 'MainMenu')    )
 
 
 if __name__ == '__main__':
     global PopsList
-    localization.readLanguage('en-us')
+    localization.setLanguage('pt-br')
 
     #TODO: make update database optional and not obrigatory when running the script!
 

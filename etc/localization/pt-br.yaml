@@ -1,0 +1,18 @@
+# Português (Brasil) localization
+# 2025 - ModulandoStars
+
+MainMenu:
+  WindowTitle:        'Ultimate Meme Payloader'
+  StartButton:        'Iniciar'
+  PayloadsButton:     'Pop-ups'
+  SettingsButton:     'Ajustes'
+  HelpButton:         'Ajuda'
+  Author:             'Feito por ModulandoStars & amigos'
+
+PayloadsManager:
+  WindowTitle:        'Gerenciador de pop-ups'
+  Exit:               'Sair'  
+  CreatePopup:        'Criar pop-up'
+  DeletePopup:        'Deletar pop-up'
+  PlaybackPlay:       'Reproduzir'
+  PlaybackStop:       'Parar'

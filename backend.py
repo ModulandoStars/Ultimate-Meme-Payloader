@@ -18,7 +18,8 @@ def ReadSettings():
     return 
 
 
-# i should make another script so this can be the main script... oh well..
+# In retrospect i think pyson-db was kinda overkill, but i wanna see if someone has the will
+# to push limits.
 class PopupDatabase: 
     def __init__(self):
         pass

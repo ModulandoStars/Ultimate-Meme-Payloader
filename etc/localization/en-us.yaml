@@ -2,19 +2,17 @@
 # 2025 - ModulandoStars
 
 MainMenu:
-  WindowTitle: 'Ultimate Meme Payloader'
-  StartButton: 'Start'
-  PayloadsButton: 'Payloads'
-  SettingsButton: 'Settings'
-  HelpButton: 'Help'
-  Author: 'Made by ModulandoStars & friends with love'
+  WindowTitle:        'Ultimate Meme Payloader'
+  StartButton:        'Start'
+  PayloadsButton:     'Payloads'
+  SettingsButton:     'Settings'
+  HelpButton:         'Help'
+  Author:             'Made by ModulandoStars & friends with love'
 
-
-  #TODO
-PayloadsMangaer:
-  WindowTitle:
-  Exit:
-  CreatePopup:
-  DeletePopup:
-  PlaybackPlay:
-  PlaybackStop:
+PayloadsManager:
+  WindowTitle:        'Payload Manager'
+  Exit:               'Exit'  
+  CreatePopup:        'Create payload'
+  DeletePopup:        'Delete payload'
+  PlaybackPlay:       'Play'
+  PlaybackStop:       'Stop'
