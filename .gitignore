@@ -4,7 +4,6 @@ etc/*.json
 
 build/*
 dist/*
-*.spec
 
 environments/*
 
