@@ -111,7 +111,7 @@ class MainMenu(QtWidgets.QMainWindow):
 
 
     def localizeUI(self):
-        print(localization.translate('Author', 'MainMenu'))
+        #print(localization.translate('Author', 'MainMenu'))
         self.Author.setText(localization.translate('Author', 'MainMenu'))
     
 

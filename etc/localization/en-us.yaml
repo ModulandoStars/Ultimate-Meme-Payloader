@@ -8,3 +8,13 @@ MainMenu:
   SettingsButton: 'Settings'
   HelpButton: 'Help'
   Author: 'Made by ModulandoStars & friends with love'
+
+
+  #TODO
+PayloadsMangaer:
+  WindowTitle:
+  Exit:
+  CreatePopup:
+  DeletePopup:
+  PlaybackPlay:
+  PlaybackStop:

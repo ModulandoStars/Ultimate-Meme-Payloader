@@ -18,6 +18,7 @@ print(f"Source: {filesToCopy}, amount: {remainingFilesToCopy}, destination: {cop
 
 while remainingFilesToCopy > 0:
     sourceFile = filesToCopy[remainingFilesToCopy-1]
+    
     if os.path.isdir(sourceFile) == True:
         print(f'Copying Directory {sourceFile} to {sourceFile+copyDestination}...')
         copy.copytree(sourceFile, copyDestination+"\\"+sourceFile, dirs_exist_ok=True)
