@@ -15,10 +15,14 @@ from backend import PopupDatabase
 
 app = QApplication(sys.argv)
 
-
+#placeholder media in case of problems, like file not existing (poor mistake on user's end lol)
+noImage = "./etc/icons/noImage.png"
     
 
+
+
 # PopupList / Popup Manager
+# 351x301
 PopupListUI = 'PopupList.ui'
 class PopupList(QtWidgets.QMainWindow):
     def __init__(self):
@@ -34,16 +38,21 @@ class PopupList(QtWidgets.QMainWindow):
         
         self.PopupListWidget.addItems(PopupNameList)
         self.PopupListWidget.itemActivated.connect(self.PopupSelectionChanged)
+
+        self.PlaybackControlButton.setEnabled(False)
         self.PlaybackControlButton.clicked.connect(self.ControlAudio)
 
     def ControlAudio(self):
         self.PlayingAudio = self.AudioPlayer.playbackState() == QMediaPlayer.PlaybackState.PlayingState
-        if self.PlayingAudio == False:
-            self.AudioPlayer.play()
-            self.PlaybackControlButton.setText('Stop')
-        elif self.PlayingAudio == True:
-            self.AudioPlayer.stop()
-            self.PlaybackControlButton.setText('Play')
+        if self.AudioReady == 1:
+            if self.PlayingAudio == False:
+                self.AudioPlayer.play()
+                self.PlaybackControlButton.setText('Stop')
+            elif self.PlayingAudio == True:
+                self.AudioPlayer.stop()
+                self.PlaybackControlButton.setText('Play')
+        else:
+            print('[Popup Manager] Audio isnt ready, does the file exist?')
         
     def PopupSelectionChanged(self, item):
         self.AudioReady = 0
@@ -51,17 +60,32 @@ class PopupList(QtWidgets.QMainWindow):
         SelectedPopup = PopupDatabase.ReadName(SelectedPopup)
         print(str(SelectedPopup) + " / " + str(type(SelectedPopup)))
         SelectedPopup = SelectedPopup[0]
-        PopupImage = QPixmap(SelectedPopup["imageDirectory"])
+        
+        
+        #PopupImage = QPixmap(SelectedPopup["imageDirectory"])
+        if os.path.exists(SelectedPopup["imageDirectory"]):
+            PopupImage = QPixmap(SelectedPopup["imageDirectory"])
+            self.PopupImagePreview.setPixmap(PopupImage)
+        else:
+            PopupImage = QPixmap(noImage)
+            self.PopupImagePreview.setPixmap(PopupImage)
+            print(f'[Popup Manager] No image ({SelectedPopup["imageDirectory"]}) file is present, using placeholder -> {noImage}')
+
         if os.path.exists(SelectedPopup["soundDirectory"]):
             self.AudioPlayer.setSource(QUrl.fromLocalFile(SelectedPopup["soundDirectory"]))
+            self.AudioReady = 1
+            self.PlaybackControlButton.setEnabled(True)
+            print(f'[Popup Manager] Found {SelectedPopup["soundDirectory"]} as audio')
         else:
-            print('No audio file is present')
-        self.AudioReady = 1
+            self.PlaybackControlButton.setEnabled(False)
+            print(f'[Popup Manager] Audio file ({SelectedPopup["soundDirectory"]}) dosent exist ')
+        
+        
         
         self.PopupName.setText(SelectedPopup["name"])
 
         
-        self.PopupImagePreview.setPixmap(PopupImage)
+        
 
 
 
