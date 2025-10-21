@@ -9,16 +9,12 @@ PyInstaller.__main__.run([
 
 ])
 
-filesToCopy = [
-            'MainMenu.ui',
-            'PopupList.ui',
-            'etc',
-            'pops'
-            ]
+filesToCopy = open("sourceFilesForCompile.txt").read().splitlines()
 
 
 remainingFilesToCopy = len(filesToCopy)
 copyDestination = 'dist'
+print(f"Source: {filesToCopy}, amount: {remainingFilesToCopy}, destination: {copyDestination}")
 
 while remainingFilesToCopy > 0:
     sourceFile = filesToCopy[remainingFilesToCopy-1]
