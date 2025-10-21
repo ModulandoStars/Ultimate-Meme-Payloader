@@ -1,1 +1,10 @@
-AAG =
+# English (United States) localization
+# 2025 - ModulandoStars
+
+MainMenu:
+  WindowTitle: 'Ultimate Meme Payloader'
+  StartButton: 'Start'
+  PayloadsButton: 'Payloads'
+  SettingsButton: 'Settings'
+  HelpButton: 'Help'
+  Author: 'Made by ModulandoStars & friends with love'

@@ -101,19 +101,28 @@ class MainMenu(QtWidgets.QMainWindow):
         self.ui = uic.loadUi(MainMenuUI, self)
 
         self.PayloadsButton.clicked.connect(self.OpenPopupList)
-    
+        self.localizeUI()
+
         #print(self.ui.lineEdit.text())
 
     def OpenPopupList(self):
         PopupManager = PopupList()
         PopupManager.show()
+
+
+    def localizeUI(self):
+        print(localization.translate('Author', 'MainMenu'))
+        self.Author.setText(localization.translate('Author', 'MainMenu'))
     
 
 
 if __name__ == '__main__':
     global PopsList
+    localization.readLanguage('en-us')
 
     #TODO: make update database optional and not obrigatory when running the script!
+
+    #print(localization.ocean)
 
     PopsList = PopupDatabase.Update()
     PopsListIDConvertion = len(PopsList)
