@@ -9,6 +9,7 @@ from PyQt6.QtGui        import QPixmap
 from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PyQt6.QtCore       import QUrl
 
+import localization     as localization
 
 import os               # File and System Shenanegains
 from backend import PopupDatabase
@@ -18,7 +19,6 @@ app = QApplication(sys.argv)
 #placeholder media in case of problems, like file not existing (poor mistake on user's end lol)
 noImage = "./etc/icons/noImage.png"
     
-
 
 
 # PopupList / Popup Manager
