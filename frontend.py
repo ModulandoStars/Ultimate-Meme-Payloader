@@ -10,6 +10,7 @@ from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PyQt6.QtCore       import QUrl
 
 import localization     as localization
+localization = localization()
 
 import os               # File and System Shenanegains
 from backend import PopupDatabase
