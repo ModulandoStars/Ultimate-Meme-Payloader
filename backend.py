@@ -17,6 +17,16 @@ if os.path.exists(PopsDirectory) == False:
             exit()
 else:
     PopsFolderList = os.listdir(PopsDirectory)
+    print(f"[PopupDatabase.FolderList] pre folder filter: {PopsFolderList}")
+    FolderListFilter = []
+    for item in PopsFolderList:
+        if os.path.isdir(f"{PopsDirectory}\\{item}") == True:
+            print(f"[PopupDatabase.FolderList] {item} is a directory!! hooray")
+            FolderListFilter.append(item)
+            
+    PopsFolderList = FolderListFilter
+    del FolderListFilter
+    print(f"[PopupDatabase.FolderList] post folder filter: {PopsFolderList}")
 
 
 def ReadSettings():
@@ -82,7 +92,7 @@ class PopupDatabase:
                 "soundDirectory":   IndividualPopupDirectory + PopInfo['soundDir'],
                 "time":             int(float(PopInfo['time'])),
                 })
-            print('[PopupDatabase.Update] ' + PopsFolderList[PopsAmount-1] + " has the if of: " + str(PopId))   
+            print('[PopupDatabase.Update] ' + PopsFolderList[PopsAmount-1] + " has the id of: " + str(PopId))   
 
             PopsIdentificationList.insert(0, PopId)  
             PopsAmount -= 1
