@@ -47,6 +47,8 @@ class PopupList(QtWidgets.QMainWindow):
         self.PlaybackControlButton.setEnabled(False)
         self.PlaybackControlButton.clicked.connect(self.ControlAudio)
 
+        self.setFixedSize(617, 488)
+
         self.localizeUI()
 
     def localizeUI(self):
@@ -103,8 +105,30 @@ class PopupList(QtWidgets.QMainWindow):
         
         self.PopupName.setText(SelectedPopup["name"])
 
+# Payloader        
+PayloaderUI = 'Payloader.ui'
+class Payloader(QtWidgets.QMainWindow):
+    # def teste():
+    #     print('a')
+    
+    def __init__(self):
+        super().__init__()
+        self.ui = uic.loadUi(PayloaderUI, self)
+
+        placeholderImage = QPixmap("print.png")
+        print(placeholderImage.size())
+        self.imageLabel.setPixmap(placeholderImage)
+        self.imageLabel.resize(placeholderImage.size())
+        #self.resize()
         
-        
+
+        self.setFixedSize(self.imageLabel.size())
+        self.localizeUI()
+
+
+    def localizeUI(self):
+       # self.[object].setText(localization.translate('func', 'Payloader'))
+        print(f"theres nothing here to localize still.")        
 
 
 
@@ -120,6 +144,8 @@ class MainMenu(QtWidgets.QMainWindow):
         self.ui = uic.loadUi(MainMenuUI, self)
 
         self.PayloadsButton.clicked.connect(self.OpenPopupList)
+
+        self.setFixedSize(566, 203)
         self.localizeUI()
 
         #print(self.ui.lineEdit.text())
@@ -168,6 +194,8 @@ if __name__ == '__main__':
 
 
     MainMenu().show()
+    Payloader().show()
+
     sys.exit(app.exec())
 
 

@@ -11,6 +11,6 @@ create a directory. (eg. 'pops/ExampleDir') inside it you create a settings.ini 
 
 > \[Settings\]
 >
-> imageDir = *\[PATH TO YOUR IMAGE EG. image.png\]*
-> soundDir = *\[PATH TO YOUR IMAGE EG. image.png\]*
-> time = *\[INTEGER NUMBER\]
+> imageDir = *\[PATH TO YOUR IMAGE EG. image.png\]*\
+> soundDir = *\[PATH TO YOUR IMAGE EG. image.png\]*\
+> time = *\[INTEGER NUMBER\]*
