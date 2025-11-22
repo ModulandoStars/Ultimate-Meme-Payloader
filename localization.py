@@ -16,29 +16,28 @@ class language:
         #for languageFiles in 
         #print('done')
         return filesInLanguage
-    locale = ""
+
     def setLanguage(self, lang):
         lang = "./etc/localization/"+ lang + ".yaml" 
         with open(lang, 'r') as file:
-            locale = yaml.safe_load(file)  
+            global localFile
+            localFile = yaml.safe_load(file)  
         print(lang)
-        print(locale)
-        self.locale = locale
+        print(localFile)
         
 
 
-        AAG = 'oi'
-        print(AAG)
-        AAG = locale['MainMenu']['WindowTitle']
-        print(AAG)
-        return locale
+
+        SampleWindowTitle = localFile['MainMenu']['WindowTitle']
+        print(SampleWindowTitle)
+        return localFile
 
     def translate(self, sourceText, textGroup=None):
-        #text = self.locale[textGroup][sourceText]
-        print('a')
-        #return text
+        text = localFile[textGroup][sourceText]
+        print(f"'{sourceText}' translated to '{text}'")
+        return text
 
-class text:
+""" class text:
     managerTitle =      language.translate('WindowTitle', 'PayloadsManager')
     createPopup =       language.translate('CreatePopup', 'PayloadsManager')
     deletePopup =       language.translate('DeletePopup', 'PayloadsManager')
@@ -54,14 +53,16 @@ class text:
     Settings =          language.translate('SettingsButton', 'MainMenu')
     Help =              language.translate('HelpButton', 'MainMenu')        
     
-    universal = "a"
+    universal = "a" """
 
 # i fucking broke it, i'm gonna KMS
 if __name__ == '__main__':
-    languageFunc = language()
-    print(languageFunc.retrieveLanguages())
-    languageFunc.setLanguage('en-us')
+
+    
+    languageClass = language()
+    print(languageClass.retrieveLanguages)
+    languageClass.setLanguage('en-us')
     #print(text.ManagerTitle)
-    languageFunc.setLanguage('pt-br')
+    languageClass.setLanguage('pt-br')
     #print(text.ManagerTitle)
-    print(languageFunc.translate('StartButton', 'MainMenu'))
+    print(language().translate('StartButton', 'MainMenu'))

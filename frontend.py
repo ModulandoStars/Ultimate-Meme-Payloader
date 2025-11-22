@@ -9,8 +9,8 @@ from PyQt6.QtGui        import QPixmap
 from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PyQt6.QtCore       import QUrl
 
-import localization     as localization
-localization = localization()
+from localization import language
+localization = language()
 
 import os               # File and System Shenanegains
 from backend import PopupDatabase
@@ -56,8 +56,8 @@ class PopupList(QtWidgets.QMainWindow):
         self.DeletePopup.setText(   localization.translate('DeletePopup', 'PayloadsManager'))
         self.ExitButton.setText(    localization.translate('Exit', 'PayloadsManager'))
         
-        playbackPlay =              localization.translate('PlaybackPlay', 'PayloadsManager')
-        playbackStop =              localization.translate('PlaybackStop', 'PayloadsManager')
+        self.playbackPlay =              localization.translate('PlaybackPlay', 'PayloadsManager')
+        self.playbackStop =              localization.translate('PlaybackStop', 'PayloadsManager')
         
         self.PopupName.setText(     localization.translate('WindowTitle', 'PayloadsManager'))
 
@@ -77,7 +77,7 @@ class PopupList(QtWidgets.QMainWindow):
         self.AudioReady = 0
         SelectedPopup = item.text()
         SelectedPopup = PopupDatabase.ReadName(SelectedPopup)
-        print(str(SelectedPopup) + " / " + str(type(SelectedPopup)))
+        print(f"{str(SelectedPopup)} / {str(type(SelectedPopup))}")
         SelectedPopup = SelectedPopup[0]
         
         

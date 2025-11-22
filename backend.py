@@ -10,7 +10,13 @@ RootDirectory = os.getcwd()
 PopsInformationDatabaseJson = "\\etc\\database.json"
 PopsIdentificationDatabaseJson = "\\etc\\PopsFolderList.json"
 PopsDirectory = RootDirectory + "\\pops"
-PopsFolderList = os.listdir(PopsDirectory)
+
+if os.path.exists(PopsDirectory) == False:
+            print('no pops folder was detected, creating a "pops" directory and exiting...')
+            os.mkdir(PopsDirectory)
+            exit()
+else:
+    PopsFolderList = os.listdir(PopsDirectory)
 
 
 def ReadSettings():
@@ -33,9 +39,7 @@ class PopupDatabase:
         # TODO: add fail checks, like if image/sound/time file dosen't exist, 
         # preferebly another function that this calls at the end of the function.
 
-        if os.path.exists(RootDirectory + "\\pops") == False:
-            print('no pops folder was detected, please create a "pops" directory on the root folder...')
-            return "NoPopsFolder"
+       
         
         # this was a substitute for 'db.purge()' that is on official pysondb-v2, but i ended up finding that deleteAll means the same thing. Seriously why isn't this documented?
         if os.path.exists(RootDirectory + "\\etc") == True:
