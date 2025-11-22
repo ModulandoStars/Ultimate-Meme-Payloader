@@ -3,6 +3,8 @@
 # I take it back, it looks way harder than I thought lmao [09/10/2025]
 import sys
 
+# if you're on linux, install ffmpeg and qt6-multimedia-dev before downloading the dependecies for PyQt6.QtMultimedia to not draw an error.
+
 from PyQt6.QtWidgets    import QApplication
 from PyQt6              import QtWidgets, uic
 from PyQt6.QtGui        import QPixmap

@@ -6,6 +6,8 @@ from pysondb import db                   # for ACTUAL database!!!
 
 ini = ConfigParser()
 
+# os.path is not unix friendly! may be better to change to something more universal
+
 RootDirectory = os.getcwd()
 PopsInformationDatabaseJson = "\\etc\\database.json"
 PopsIdentificationDatabaseJson = "\\etc\\PopsFolderList.json"
