@@ -1,9 +1,13 @@
 pops/*
+!pops/readme.md
+
 __pycache__/*
 etc/*.json
 
 build/*
 dist/*
+
+
 
 environments/*
 

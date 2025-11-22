@@ -77,12 +77,12 @@ class PopupList(QtWidgets.QMainWindow):
         self.AudioReady = 0
         SelectedPopup = item.text()
         SelectedPopup = PopupDatabase.ReadName(SelectedPopup)
-        print(f"{str(SelectedPopup)} / {str(type(SelectedPopup))}")
         SelectedPopup = SelectedPopup[0]
+        print(f"{str(SelectedPopup)} / {str(type(SelectedPopup))}")
         
         
         #PopupImage = QPixmap(SelectedPopup["imageDirectory"])
-        if os.path.exists(SelectedPopup["imageDirectory"]):
+        if os.path.exists(SelectedPopup["imageDirectory"]) and os.path.isfile(SelectedPopup["imageDirectory"]) == True:
             PopupImage = QPixmap(SelectedPopup["imageDirectory"])
             self.PopupImagePreview.setPixmap(PopupImage)
         else:
@@ -90,7 +90,7 @@ class PopupList(QtWidgets.QMainWindow):
             self.PopupImagePreview.setPixmap(PopupImage)
             print(f'[Popup Manager] No image ({SelectedPopup["imageDirectory"]}) file is present, using placeholder -> {noImage}')
 
-        if os.path.exists(SelectedPopup["soundDirectory"]):
+        if os.path.exists(SelectedPopup["soundDirectory"]) and os.path.isfile(SelectedPopup["soundDirectory"]) == True:
             self.AudioPlayer.setSource(QUrl.fromLocalFile(SelectedPopup["soundDirectory"]))
             self.AudioReady = 1
             self.PlaybackControlButton.setEnabled(True)

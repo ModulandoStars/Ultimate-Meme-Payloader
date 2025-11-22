@@ -88,7 +88,7 @@ class PopupDatabase:
             # Popup Info 
             PopId = PopsDatabase.add({
                 "name":             PopsFolderList[PopsAmount-1],
-                "imageDirectory":   IndividualPopupDirectory + PopInfo['ImageDir'],
+                "imageDirectory":   IndividualPopupDirectory + PopInfo['imageDir'],
                 "soundDirectory":   IndividualPopupDirectory + PopInfo['soundDir'],
                 "time":             int(float(PopInfo['time'])),
                 })
