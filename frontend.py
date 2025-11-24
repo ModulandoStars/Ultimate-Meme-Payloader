@@ -2,14 +2,16 @@
 # I will change the UI to be Qt because I discovered it's way easier to make UI than hard coding things [08/10/2025]
 # I take it back, it looks way harder than I thought lmao [09/10/2025]
 import sys
+import asyncio
+import random, time
 
 # if you're on linux, install ffmpeg and qt6-multimedia-dev before downloading the dependecies for PyQt6.QtMultimedia to not draw an error.
 
 from PyQt6.QtWidgets    import QApplication
 from PyQt6              import QtWidgets, uic
-from PyQt6.QtGui        import QPixmap
+from PyQt6.QtGui        import QPixmap, QWindow
 from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
-from PyQt6.QtCore       import QUrl
+from PyQt6.QtCore       import QUrl, Qt, QTimer
 
 from localization import language
 localization = language()
@@ -22,6 +24,9 @@ app = QApplication(sys.argv)
 #placeholder media in case of problems, like file not existing (poor mistake on user's end lol)
 noImage = "./etc/icons/noImage.png"
     
+# until i have a settings menu ready this will be the default rest time for the payloader.
+defaultRestTime = 5
+
 
 
 # PopupList / Popup Manager
@@ -116,14 +121,22 @@ class Payloader(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         self.ui = uic.loadUi(PayloaderUI, self)
+        self.PopupTimer = QTimer()
+        self.payloadRest = QTimer()
 
-        placeholderImage = QPixmap("print.png")
-        print(placeholderImage.size())
-        self.imageLabel.setPixmap(placeholderImage)
-        self.imageLabel.resize(placeholderImage.size())
+        self.AudioPlayer = QMediaPlayer()
+        self.AudioOutput = QAudioOutput()
+        self.AudioPlayer.setAudioOutput(self.AudioOutput)
+
+        self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
+
+        self.IniciatePayloader()
+        
+        
+        #print(QWindow.isVisible)
         #self.resize()
         
-
+        self.PopupTimer.timeout.connect(lambda:self.EndPayload())
         self.setFixedSize(self.imageLabel.size())
         self.localizeUI()
 
@@ -132,6 +145,38 @@ class Payloader(QtWidgets.QMainWindow):
        # self.[object].setText(localization.translate('func', 'Payloader'))
         print(f"theres nothing here to localize still.")        
 
+    def EndPayload(self):
+        self.hide()
+        self.payloadRest.start(defaultRestTime*1000)
+        #There's a bug in which the app will loop for an eternity and i don't know why it happens, but it happens.
+        print(f"Hiding payloader and resting for {defaultRestTime} seconds.")
+        self.payloadRest.timeout.connect(lambda:self.IniciatePayloader())
+
+#payloader :D
+    def IniciatePayloader(self):
+        print(f"We have these {PopupNameList} as popups to choose.")
+        global ChosenPopup
+        ChosenPopup = PopupDatabase.ReadName(PopupNameList[random.randint(0, len(PopupNameList)-1)])
+        ChosenPopup = ChosenPopup[0]
+        print(f"Popup {ChosenPopup['name']} was chosen!!")
+
+        if os.path.exists(ChosenPopup['imageDirectory']) and os.path.isfile(ChosenPopup['imageDirectory']) == True:
+            ChosenImage = QPixmap(ChosenPopup['imageDirectory'])
+            print(ChosenImage.size())
+            self.imageLabel.setPixmap(ChosenImage)
+            self.imageLabel.resize(ChosenImage.size())
+            self.PopupTimer.start(int(ChosenPopup['time'])*1000)
+            
+            self.show()
+        
+        else:          
+            print('No image to show!')
+            #the correct should let the audio play.
+            self.EndPayload()
+            #self.hide()
+
+        if os.path.exists(ChosenPopup['soundDirectory']) and os.path.isfile(ChosenPopup['soundDirectory']) == True:
+            print()
 
 
 
@@ -146,6 +191,7 @@ class MainMenu(QtWidgets.QMainWindow):
         self.ui = uic.loadUi(MainMenuUI, self)
 
         self.PayloadsButton.clicked.connect(self.OpenPopupList)
+        self.StartButton.clicked.connect(self.StartPayloader)
 
         self.setFixedSize(566, 203)
         self.localizeUI()
@@ -156,6 +202,8 @@ class MainMenu(QtWidgets.QMainWindow):
         PopupManager = PopupList()
         PopupManager.show()
 
+    def StartPayloader(self):
+        Payloader().show() 
 
     def localizeUI(self):
         #print(localization.translate('Author', 'MainMenu'))
@@ -177,26 +225,26 @@ if __name__ == '__main__':
 
     PopsList = PopupDatabase.Update()
     PopsListIDConvertion = len(PopsList)
-    print(PopsList)
-
+    print(f"[Popup Database] List:{PopsList}")
+    
+    global PopupNameList
     PopupNameList = []
     while PopsListIDConvertion > 0:
-        print(PopsList[PopsListIDConvertion-1])
-        print(type(PopsList[PopsListIDConvertion-1]))
+        print(f"Actual ID to read: {PopsList[PopsListIDConvertion-1]}")
+        #print(f"Type {type(PopsList[PopsListIDConvertion-1])}")
         IndividualPopupInfomation = PopupDatabase.Read(PopsList[PopsListIDConvertion-1])
-        print(IndividualPopupInfomation["name"])
+        print(f"name of the popup: {IndividualPopupInfomation['name']}")
         PopupNameList.insert(0, IndividualPopupInfomation["name"])
         
         PopsListIDConvertion -= 1
-    print(PopupNameList)
-
+    print(f"List of Popups available: {PopupNameList}")
+    
 
     
     print(PopupDatabase.Read())
 
 
     MainMenu().show()
-    Payloader().show()
 
     sys.exit(app.exec())
 
