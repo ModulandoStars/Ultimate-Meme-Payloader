@@ -6,9 +6,9 @@ importlib_metadata==8.7.0
 packaging==25.0
 pyinstaller==6.16.0
 pyinstaller-hooks-contrib==2025.10
-PyQt6==6.10.0
+PyQt6==6.1.0
 pyqt6-plugins==6.1.0.2.2
-PyQt6-Qt6==6.10.0
+PyQt6-Qt6==6.1.0
 pyqt6-tools==6.1.0.3.2
 PyQt6_sip==13.10.2
 pysondb==1.6.7
