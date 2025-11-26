@@ -15,3 +15,7 @@ Include/*
 Lib/*
 Scripts/*
 pyvenv.cfg
+lib/*
+bin/*
+lib64
+include/*
