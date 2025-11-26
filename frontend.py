@@ -22,7 +22,7 @@ from backend import PopupDatabase
 app = QApplication(sys.argv)
 
 #placeholder media in case of problems, like file not existing (poor mistake on user's end lol)
-noImage = "./etc/icons/noImage.png"
+noImage = ".\\etc\\icons\\noImage.png"
     
 # until i have a settings menu ready this will be the default rest time for the payloader.
 defaultRestTime = 5

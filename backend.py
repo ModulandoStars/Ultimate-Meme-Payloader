@@ -9,6 +9,7 @@ ini = ConfigParser()
 # os.path is not unix friendly! may be better to change to something more universal
 
 RootDirectory = os.getcwd()
+print(f"UMP's root directory is: {RootDirectory}")
 PopsInformationDatabaseJson = "\\etc\\database.json"
 PopsIdentificationDatabaseJson = "\\etc\\PopsFolderList.json"
 PopsDirectory = RootDirectory + "\\pops"
