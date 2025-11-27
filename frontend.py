@@ -6,10 +6,12 @@ import asyncio
 import random, time
 
 # if you're on linux, install ffmpeg and qt6-multimedia-dev before downloading the dependecies for PyQt6.QtMultimedia to not draw an error.
+# QtMultimedia just dosen't exist for Linux i guess, so if you want to use this app on unix you just may aswell use another Audio API.
+# I will try to make a option and not use QtMultimedia especifically for linux then.
 
-from PyQt6.QtWidgets    import QApplication
+from PyQt6.QtWidgets    import QApplication, QSystemTrayIcon, QMenu, QMainWindow
 from PyQt6              import QtWidgets, uic
-from PyQt6.QtGui        import QPixmap, QWindow
+from PyQt6.QtGui        import QPixmap, QWindow, QIcon
 from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PyQt6.QtCore       import QUrl, Qt, QTimer
 
@@ -17,7 +19,7 @@ from localization import language
 localization = language()
 
 import os               # File and System Shenanegains
-from backend import PopupDatabase
+from backend import PopupDatabase, RootDirectory
 
 app = QApplication(sys.argv)
 
@@ -46,7 +48,7 @@ class PopupList(QtWidgets.QMainWindow):
         self.AudioOutput = QAudioOutput()
         self.AudioPlayer.setAudioOutput(self.AudioOutput)
         
-        self.ExitButton.clicked.connect(lambda:self.close())
+        self.ExitButton.clicked.connect(lambda:self.quit())
         
         self.PopupListWidget.addItems(PopupNameList)
         self.PopupListWidget.itemActivated.connect(self.PopupSelectionChanged)
@@ -198,11 +200,21 @@ class MainMenu(QtWidgets.QMainWindow):
 
         #print(self.ui.lineEdit.text())
 
+        # System Tray Icon
+        iconPicFile = RootDirectory + "\\etc\\icon.png"
+        #QApplication.setWindowIcon(QIcon(iconPicFile))
+
+        QuitTrayButton = QMenu.addAction(self, "a")
+        
+
+
     def OpenPopupList(self):
         PopupManager = PopupList()
         PopupManager.show()
 
     def StartPayloader(self):
+
+        self.hide()
         Payloader().show() 
 
     def localizeUI(self):
