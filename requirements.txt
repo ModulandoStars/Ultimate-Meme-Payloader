@@ -1,5 +1,0 @@
-PyQt6
-PyQt6-tools
-pysondb
-pyinstaller
-pyyaml
