@@ -45,6 +45,7 @@ class PopupList(QtWidgets.QMainWindow):
         self.ui = uic.loadUi(PopupListUI, self)
         print(self)
         self.PlayingAudio = False
+        self.PlayingAudioTimer = QTimer()
 
         
         self.AudioPlayer = QMediaPlayer()
@@ -81,18 +82,21 @@ class PopupList(QtWidgets.QMainWindow):
         if self.AudioReady == True:
             if self.PlayingAudio == True:
                 self.popupSound = playsound(self.SelectedPopup["soundDirectory"], block=False)
+                self.PlayingAudioTimer.start(int(self.SelectedPopup["time"])*1000)
+                print(f"timer for {int(self.SelectedPopup['time'])}")
                 self.PlaybackControlButton.setText(self.playbackStop)
             else:
                 self.popupSound.stop()
                 self.PlaybackControlButton.setText(self.playbackPlay)
         
-        while self.PlayingAudio is True:
-            if self.popupSound.is_alive() == False:
-                self.PlayingAudio == False
-                self.PlaybackControlButton.setText(self.playbackStop)
+        self.PlayingAudioTimer.timeout.connect(lambda:self.EndPlaybackStatus())
+        
 
+    def EndPlaybackStatus(self):
+        self.popupSound.stop()
+        self.PlayingAudio = False
+        self.PlaybackControlButton.setText(self.playbackPlay)
 
-    
 #    def ControlAudio(self):
 #        popupSound = playsound(self.SelectedPopup["soundDirectory"])
 #        print(f'[CONTROL AUDIO] {self.SelectedPopup["soundDirectory"]}')
