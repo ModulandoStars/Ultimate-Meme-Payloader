@@ -4,6 +4,7 @@
 import sys
 import asyncio
 import random, time
+import pygame # for payloader lmao
 
 # if you're on linux, install ffmpeg and qt6-multimedia-dev before downloading the dependecies for PyQt6.QtMultimedia to not draw an error.
 # QtMultimedia just dosen't exist for Linux i guess, so if you want to use this app on unix you just may aswell use another Audio API.
@@ -12,7 +13,7 @@ from PyQt6              import QtWidgets, uic
 from PyQt6.QtWidgets    import QApplication, QMenu
 from PyQt6.QtGui        import QPixmap, QWindow, QIcon
 from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
-from playsound3         import playsound
+from playsound3         import playsound # i need helping testing with linux on this one :P
 
 from PyQt6.QtCore       import QUrl, Qt, QTimer
 
@@ -137,76 +138,109 @@ class PopupList(QtWidgets.QMainWindow):
             self.PlaybackControlButton.setEnabled(False)
             print(f'[Popup Manager] Audio file ({self.SelectedPopup["soundDirectory"]}) dosent exist ')
         
-        
+        if self.PlayingAudio == True:
+            self.ControlAudio()
         
         self.PopupName.setText(self.SelectedPopup["name"])
 
 # Payloader        
-PayloaderUI = 'Payloader.ui'
-class Payloader(QtWidgets.QMainWindow):
-    # def teste():
-    #     print('a')
-    
+
+class Payloader():
     def __init__(self):
-        super().__init__()
-        self.ui = uic.loadUi(PayloaderUI, self)
-        self.PopupTimer = QTimer()
-        self.payloadRest = QTimer()
-
-        self.AudioPlayer = QMediaPlayer()
-        self.AudioOutput = QAudioOutput()
-        self.AudioPlayer.setAudioOutput(self.AudioOutput)
-
-        self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
-
-        self.IniciatePayloader()
         
-        
-        #print(QWindow.isVisible)
-        #self.resize()
-        
-        self.PopupTimer.timeout.connect(lambda:self.EndPayload())
-        self.setFixedSize(self.imageLabel.size())
-        self.localizeUI()
+        pass
 
+    def start(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode((1280, 720))
+        self.clock = pygame.time.Clock()
+        self.running = True
 
-    def localizeUI(self):
-       # self.[object].setText(localization.translate('func', 'Payloader'))
-        print(f"theres nothing here to localize still.")        
+        while self.running:
+        # poll for events
+        # pygame.QUIT event means the user clicked X to close your window
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
 
-    def EndPayload(self):
-        self.hide()
-        self.payloadRest.start(defaultRestTime*1000)
-        #There's a bug in which the app will loop for an eternity and i don't know why it happens, but it happens.
-        print(f"Hiding payloader and resting for {defaultRestTime} seconds.")
-        self.payloadRest.timeout.connect(lambda:self.IniciatePayloader())
+        # fill the screen with a color to wipe away anything from last frame
+            self.screen.fill("purple")
 
-#payloader :D
-    def IniciatePayloader(self):
-        print(f"We have these {PopupNameList} as popups to choose.")
-        global ChosenPopup
-        ChosenPopup = PopupDatabase.ReadName(PopupNameList[random.randint(0, len(PopupNameList)-1)])
-        ChosenPopup = ChosenPopup[0]
-        print(f"Popup {ChosenPopup['name']} was chosen!!")
+        # RENDER YOUR GAME HERE
 
-        if os.path.exists(ChosenPopup['imageDirectory']) and os.path.isfile(ChosenPopup['imageDirectory']) == True:
-            ChosenImage = QPixmap(ChosenPopup['imageDirectory'])
-            print(ChosenImage.size())
-            self.imageLabel.setPixmap(ChosenImage)
-            self.imageLabel.resize(ChosenImage.size())
-            self.PopupTimer.start(int(ChosenPopup['time'])*1000)
-            
-            self.show()
-        
-        else:          
-            print('No image to show!')
-            #the correct should let the audio play.
-            self.EndPayload()
-            #self.hide()
+        # flip() the display to put your work on screen
+            pygame.display.flip()
 
-        if os.path.exists(ChosenPopup['soundDirectory']) and os.path.isfile(ChosenPopup['soundDirectory']) == True:
-            print()
+            self.clock.tick(60)  # limits FPS to 60
 
+        pygame.quit()
+
+#PayloaderUI = 'Payloader.ui'
+#class Payloader(QtWidgets.QMainWindow):
+#    # def teste():
+#    #     print('a')
+#    
+#    def __init__(self):
+#        super().__init__()
+#        self.ui = uic.loadUi(PayloaderUI, self)
+#        self.PopupTimer = QTimer()
+#        self.payloadRest = QTimer()
+#
+#        self.AudioPlayer = QMediaPlayer()
+#        self.AudioOutput = QAudioOutput()
+#        self.AudioPlayer.setAudioOutput(self.AudioOutput)
+#
+#        self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
+#
+#        self.IniciatePayloader()
+#        
+#        
+#        #print(QWindow.isVisible)
+#        #self.resize()
+#        
+#        self.PopupTimer.timeout.connect(lambda:self.EndPayload())
+#        self.setFixedSize(self.imageLabel.size())
+#        self.localizeUI()
+#
+#
+#    def localizeUI(self):
+#       # self.[object].setText(localization.translate('func', 'Payloader'))
+#        print(f"theres nothing here to localize still.")        
+#
+#    def EndPayload(self):
+#        self.hide()
+#        self.payloadRest.start(defaultRestTime*1000)
+#        #There's a bug in which the app will loop for an eternity and i don't know why it happens, but it happens.
+#        print(f"Hiding payloader and resting for {defaultRestTime} seconds.")
+#        self.payloadRest.timeout.connect(lambda:self.IniciatePayloader())
+#
+##payloader :D
+#    def IniciatePayloader(self):
+#        print(f"We have these {PopupNameList} as popups to choose.")
+#        global ChosenPopup
+#        ChosenPopup = PopupDatabase.ReadName(PopupNameList[random.randint(0, len(PopupNameList)-1)])
+#        ChosenPopup = ChosenPopup[0]
+#        print(f"Popup {ChosenPopup['name']} was chosen!!")
+#
+#        if os.path.exists(ChosenPopup['imageDirectory']) and os.path.isfile(ChosenPopup['imageDirectory']) == True:
+#            ChosenImage = QPixmap(ChosenPopup['imageDirectory'])
+#            print(ChosenImage.size())
+#            self.imageLabel.setPixmap(ChosenImage)
+#            self.imageLabel.resize(ChosenImage.size())
+#            self.PopupTimer.start(int(ChosenPopup['time'])*1000)
+#            
+#            self.show()
+#        
+#        else:          
+#            print('No image to show!')
+#            self.PopupTimer.start(int(ChosenPopup['time'])*1000)
+#            #the correct should let the audio play.
+#            self.EndPayload()
+#            #self.hide()
+#
+#        if os.path.exists(ChosenPopup['soundDirectory']) and os.path.isfile(ChosenPopup['soundDirectory']) == True:
+#            print(f"some audio should play:{ChosenPopup['soundDirectory']}" )
+#
 
 
 # Main Menu
@@ -242,7 +276,7 @@ class MainMenu(QtWidgets.QMainWindow):
     def StartPayloader(self):
 
         self.hide()
-        Payloader().show() 
+        Payloader().start()
 
     def localizeUI(self):
         #print(localization.translate('Author', 'MainMenu'))
