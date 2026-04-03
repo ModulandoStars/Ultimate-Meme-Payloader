@@ -151,28 +151,67 @@ class Payloader():
         pass
 
     def start(self):
+        global appStatus
+        global masterVol
+        appStatus = 'payloader'
         pygame.init()
+        pygame.mixer.init()
         self.screen = pygame.display.set_mode((1280, 720))
         self.clock = pygame.time.Clock()
         self.running = True
 
+        masterVol = 100
+
+        startStopwatch = 0
+        stopwatch = 0
+        ChosenPopup = PopupDatabase.ReadName(PopupNameList[random.randint(0, len(PopupNameList)-1)])[0]
+        IsImageActive = False
+        IsPayloadActive = False
+        IsAudioPlaying = False
+                
         while self.running:
         # poll for events
         # pygame.QUIT event means the user clicked X to close your window
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    MainMenu().show()
                     self.running = False
+                
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        IsPayloadActive = True
+                        startStopwatch = pygame.time.get_ticks()
+                        print(f"{startStopwatch}")
 
-        # fill the screen with a color to wipe away anything from last frame
-            self.screen.fill("purple")
+            stopwatch = pygame.time.get_ticks()-startStopwatch
+            
+            if IsPayloadActive == True:
+                if IsImageActive == False:
+                    if os.path.exists(ChosenPopup['imageDirectory']) and os.path.isfile(ChosenPopup['imageDirectory']) == True:
+                        pygame_PopupImage = pygame.image.load(ChosenPopup['imageDirectory'])
+                        pygame.display.set_mode(pygame_PopupImage.get_size())
+                        self.screen.blit(pygame_PopupImage, pygame_PopupImage.get_rect())
+                        IsImageActive = True
+                
+                if IsAudioPlaying == False:
+                    if os.path.exists(ChosenPopup['soundDirectory']) and os.path.isfile(ChosenPopup['soundDirectory']) == True:
+                        pygame.mixer.music.load(ChosenPopup['soundDirectory'])
+                        pygame.mixer.music.set_volume(masterVol)
+                        pygame.mixer.music.play(0)
+                        IsAudioPlaying = True
 
-        # RENDER YOUR GAME HERE
+                        
+                
+                print(stopwatch/1000)
+                if stopwatch/1000 > int(ChosenPopup['time']):
+                    quit()
 
-        # flip() the display to put your work on screen
+
             pygame.display.flip()
-
             self.clock.tick(60)  # limits FPS to 60
+            
 
+            
         pygame.quit()
 
 #PayloaderUI = 'Payloader.ui'
@@ -289,7 +328,9 @@ class MainMenu(QtWidgets.QMainWindow):
 
 
 if __name__ == '__main__':
+    global appStatus 
     global PopsList
+    appStatus = 'mainmenu'
     localization.setLanguage('pt-br')
 
     #TODO: make update database optional and not obrigatory when running the script!
