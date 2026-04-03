@@ -1,4 +1,5 @@
 import os                                       # File and System Shenanegains
+import yaml
 import random
 #import json                                    # for database (I don't know what I'm doing ;w;)
 from configparser import ConfigParser     # Settings for the app and individual pops
@@ -158,14 +159,33 @@ class PopupDatabase:
             print('[PopupDatabase.Read] ' + "Not valid response, please use an string!")
             return "Not valid response, please use an string!"
 
+class Settings:
+    def __init__(self):
+        pass
 
+
+    def Update():
+        with open("./etc/settings.yaml") as file:
+            SettingsFile = yaml.safe_load(file)
+
+        configurations = {
+            "pauseTimer": SettingsFile['Settings']['eventTime'],
+            "addMaxPauseTimer": SettingsFile['Settings']['maxRandomTime'],
+            "skipStartup": SettingsFile['Settings']['skipStartup'],
+            "debugMode": bool(SettingsFile['Settings']['skipStartup']),
+            "languages": tuple(SettingsFile['Settings']['localization']),
+            "volume": SettingsFile['Settings']['masterVol']
+        }
+        print(f"[Settings - Load] {configurations}")
+        return configurations
 
 
 if __name__ == '__main__':
-    print('This is running separetely!!!')
+    print('[Backend] This is running separetely!!!')
     Ids = PopupDatabase.Update()
     randomPopup = Ids[random.randint(0, len(Ids)-1)]
     print(randomPopup)
+    print(Settings().Update())
 
     PopupDatabase.Read()
     #PopupDatabase.Read(randomPopup)

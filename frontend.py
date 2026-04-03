@@ -21,7 +21,7 @@ from localization import language
 localization = language()
 
 import os               # File and System Shenanegains
-from backend import PopupDatabase, RootDirectory
+from backend import PopupDatabase, RootDirectory, Settings
 
 app = QApplication(sys.argv)
 
@@ -156,11 +156,11 @@ class Payloader():
         appStatus = 'payloader'
         pygame.init()
         pygame.mixer.init()
-        self.screen = pygame.display.set_mode((1280, 720))
+        self.screen = pygame.display.set_mode((1280, 720), pygame.HIDDEN)
         self.clock = pygame.time.Clock()
         self.running = True
 
-        masterVol = 100
+        pauseTimerActive = False
 
         startStopwatch = 0
         stopwatch = 0
@@ -168,7 +168,8 @@ class Payloader():
         IsImageActive = False
         IsPayloadActive = False
         IsAudioPlaying = False
-                
+        print(Config.get('pauseTimer'))
+
         while self.running:
         # poll for events
         # pygame.QUIT event means the user clicked X to close your window
@@ -176,35 +177,50 @@ class Payloader():
                 if event.type == pygame.QUIT:
                     MainMenu().show()
                     self.running = False
-                
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        IsPayloadActive = True
-                        startStopwatch = pygame.time.get_ticks()
-                        print(f"{startStopwatch}")
+
 
             stopwatch = pygame.time.get_ticks()-startStopwatch
+            #print(f"{stopwatch/1000} - {IsPayloadActive} - {pauseTimerActive}")
             
             if IsPayloadActive == True:
                 if IsImageActive == False:
                     if os.path.exists(ChosenPopup['imageDirectory']) and os.path.isfile(ChosenPopup['imageDirectory']) == True:
                         pygame_PopupImage = pygame.image.load(ChosenPopup['imageDirectory'])
-                        pygame.display.set_mode(pygame_PopupImage.get_size())
+                        pygame.display.set_mode(pygame_PopupImage.get_size(), pygame.SHOWN)
                         self.screen.blit(pygame_PopupImage, pygame_PopupImage.get_rect())
+                        
                         IsImageActive = True
+                        print(f"[Payloader - Image] showing image")
                 
                 if IsAudioPlaying == False:
                     if os.path.exists(ChosenPopup['soundDirectory']) and os.path.isfile(ChosenPopup['soundDirectory']) == True:
                         pygame.mixer.music.load(ChosenPopup['soundDirectory'])
-                        pygame.mixer.music.set_volume(masterVol)
+                        pygame.mixer.music.set_volume(Config.get('volume'))
                         pygame.mixer.music.play(0)
                         IsAudioPlaying = True
 
                         
                 
-                print(stopwatch/1000)
+                #print(stopwatch/1000)
                 if stopwatch/1000 > int(ChosenPopup['time']):
-                    quit()
+                    startStopwatch = 0
+                    pygame.mixer.music.stop()
+                    pygame.display.set_mode((800, 600), pygame.HIDDEN)
+                    IsAudioPlaying = False                    
+                    IsPayloadActive = False
+            
+            else:
+                if not pauseTimerActive:
+                    startStopwatch = pygame.time.get_ticks()
+                    ChosenPopup = PopupDatabase.ReadName(PopupNameList[random.randint(0, len(PopupNameList)-1)])[0]
+                    pauseTimer = Config.get('pauseTimer') + random.randint(0, Config.get('addMaxPauseTimer'))
+                    print(f"[Payloader - HIDDEN] pauseTimer is {pauseTimer}")
+                    pauseTimerActive = True
+                if stopwatch/1000 > pauseTimer:
+                    startStopwatch = pygame.time.get_ticks()
+                    pauseTimerActive = False
+                    IsPayloadActive = True
+
 
 
             pygame.display.flip()
@@ -213,74 +229,6 @@ class Payloader():
 
             
         pygame.quit()
-
-#PayloaderUI = 'Payloader.ui'
-#class Payloader(QtWidgets.QMainWindow):
-#    # def teste():
-#    #     print('a')
-#    
-#    def __init__(self):
-#        super().__init__()
-#        self.ui = uic.loadUi(PayloaderUI, self)
-#        self.PopupTimer = QTimer()
-#        self.payloadRest = QTimer()
-#
-#        self.AudioPlayer = QMediaPlayer()
-#        self.AudioOutput = QAudioOutput()
-#        self.AudioPlayer.setAudioOutput(self.AudioOutput)
-#
-#        self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
-#
-#        self.IniciatePayloader()
-#        
-#        
-#        #print(QWindow.isVisible)
-#        #self.resize()
-#        
-#        self.PopupTimer.timeout.connect(lambda:self.EndPayload())
-#        self.setFixedSize(self.imageLabel.size())
-#        self.localizeUI()
-#
-#
-#    def localizeUI(self):
-#       # self.[object].setText(localization.translate('func', 'Payloader'))
-#        print(f"theres nothing here to localize still.")        
-#
-#    def EndPayload(self):
-#        self.hide()
-#        self.payloadRest.start(defaultRestTime*1000)
-#        #There's a bug in which the app will loop for an eternity and i don't know why it happens, but it happens.
-#        print(f"Hiding payloader and resting for {defaultRestTime} seconds.")
-#        self.payloadRest.timeout.connect(lambda:self.IniciatePayloader())
-#
-##payloader :D
-#    def IniciatePayloader(self):
-#        print(f"We have these {PopupNameList} as popups to choose.")
-#        global ChosenPopup
-#        ChosenPopup = PopupDatabase.ReadName(PopupNameList[random.randint(0, len(PopupNameList)-1)])
-#        ChosenPopup = ChosenPopup[0]
-#        print(f"Popup {ChosenPopup['name']} was chosen!!")
-#
-#        if os.path.exists(ChosenPopup['imageDirectory']) and os.path.isfile(ChosenPopup['imageDirectory']) == True:
-#            ChosenImage = QPixmap(ChosenPopup['imageDirectory'])
-#            print(ChosenImage.size())
-#            self.imageLabel.setPixmap(ChosenImage)
-#            self.imageLabel.resize(ChosenImage.size())
-#            self.PopupTimer.start(int(ChosenPopup['time'])*1000)
-#            
-#            self.show()
-#        
-#        else:          
-#            print('No image to show!')
-#            self.PopupTimer.start(int(ChosenPopup['time'])*1000)
-#            #the correct should let the audio play.
-#            self.EndPayload()
-#            #self.hide()
-#
-#        if os.path.exists(ChosenPopup['soundDirectory']) and os.path.isfile(ChosenPopup['soundDirectory']) == True:
-#            print(f"some audio should play:{ChosenPopup['soundDirectory']}" )
-#
-
 
 # Main Menu
 MainMenuUI = 'MainMenu.ui'
@@ -332,6 +280,9 @@ if __name__ == '__main__':
     global PopsList
     appStatus = 'mainmenu'
     localization.setLanguage('pt-br')
+    global Config
+    Config = Settings.Update()
+    #print(f"[pauseTimer] {Config.get('pauseTimer')}")
 
     #TODO: make update database optional and not obrigatory when running the script!
 
