@@ -9,10 +9,13 @@ import pygame # for payloader lmao
 # if you're on linux, install ffmpeg and qt6-multimedia-dev before downloading the dependecies for PyQt6.QtMultimedia to not draw an error.
 # QtMultimedia just dosen't exist for Linux i guess, so if you want to use this app on unix you just may aswell use another Audio API.
 # I will try to make a option and not use QtMultimedia especifically for linux then.
+
+# update (2026-04-10) got rid of QtMultimedia (pyqt6) for incompatibility with linux
+
 from PyQt6              import QtWidgets, uic
 from PyQt6.QtWidgets    import QApplication, QMenu
 from PyQt6.QtGui        import QPixmap, QWindow, QIcon
-from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
+#from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
 from playsound3         import playsound # i need helping testing with linux on this one :P
 
 from PyQt6.QtCore       import QUrl, Qt, QTimer
@@ -49,9 +52,9 @@ class PopupList(QtWidgets.QMainWindow):
         self.PlayingAudioTimer = QTimer()
 
         
-        self.AudioPlayer = QMediaPlayer()
-        self.AudioOutput = QAudioOutput()
-        self.AudioPlayer.setAudioOutput(self.AudioOutput)
+        #self.AudioPlayer = QMediaPlayer()
+        #self.AudioOutput = QAudioOutput()
+        #self.AudioPlayer.setAudioOutput(self.AudioOutput)
         
         self.ExitButton.clicked.connect(lambda:self.quit())
         
@@ -160,7 +163,7 @@ class Payloader():
         self.clock = pygame.time.Clock()
         self.running = True
 
-        pauseTimerActive = False
+        IsPauseTimerActive = False
 
         startStopwatch = 0
         stopwatch = 0
@@ -179,8 +182,8 @@ class Payloader():
                     self.running = False
 
 
-            stopwatch = pygame.time.get_ticks()-startStopwatch
-            #print(f"{stopwatch/1000} - {IsPayloadActive} - {pauseTimerActive}")
+            stopwatch = pygame.time.get_ticks()
+            #print(f"{stopwatch/1000} - {IsPayloadActive} - {IsPauseTimerActive}")
             
             if IsPayloadActive == True:
                 if IsImageActive == False:
@@ -201,25 +204,29 @@ class Payloader():
 
                         
                 
-                #print(stopwatch/1000)
-                if stopwatch/1000 > int(ChosenPopup['time']):
+                
+                if (stopwatch - startStopwatch)/1000 > int(ChosenPopup['time']):
                     startStopwatch = 0
+                    stopwatch = 0
                     pygame.mixer.music.stop()
                     pygame.display.set_mode((800, 600), pygame.HIDDEN)
                     IsAudioPlaying = False                    
                     IsPayloadActive = False
+                    #print(f"[Payloader - Payload] end tick time:{pygame.time.get_ticks()}")
             
             else:
-                if not pauseTimerActive:
+                if not IsPauseTimerActive:
                     startStopwatch = pygame.time.get_ticks()
                     ChosenPopup = PopupDatabase.ReadName(PopupNameList[random.randint(0, len(PopupNameList)-1)])[0]
                     pauseTimer = Config.get('pauseTimer') + random.randint(0, Config.get('addMaxPauseTimer'))
                     print(f"[Payloader - HIDDEN] pauseTimer is {pauseTimer}")
-                    pauseTimerActive = True
-                if stopwatch/1000 > pauseTimer:
+                    IsPauseTimerActive = True
+                if (stopwatch - startStopwatch)/1000 > pauseTimer:
                     startStopwatch = pygame.time.get_ticks()
-                    pauseTimerActive = False
+                    stopwatch = 0
+                    IsPauseTimerActive = False
                     IsPayloadActive = True
+                    #print(f"[Payloader - Rest] end tick time:{pygame.time.get_ticks()} / {pygame.time.get_ticks()/1000} - {pauseTimer} (diff via direct: {pygame.time.get_ticks() - startStopwatch}")
 
 
 
