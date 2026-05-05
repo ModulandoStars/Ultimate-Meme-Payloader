@@ -19,7 +19,7 @@ class language:
 
     def setLanguage(self, lang):
         lang = "./etc/localization/"+ lang + ".yaml" 
-        with open(lang, 'r') as file:
+        with open(lang, 'r', encoding='cp1252') as file:
             global localFile
             localFile = yaml.safe_load(file)  
         print(lang)
