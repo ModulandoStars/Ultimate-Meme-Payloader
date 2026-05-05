@@ -3,7 +3,9 @@ import yaml
 import random
 #import json                                    # for database (I don't know what I'm doing ;w;)
 from configparser import ConfigParser     # Settings for the app and individual pops
+
 from pysondb import db                   # for ACTUAL database!!!
+import sqlite3
 
 ini = ConfigParser()
 
@@ -11,9 +13,13 @@ ini = ConfigParser()
 
 RootDirectory = os.getcwd()
 print(f"UMP's root directory is: {RootDirectory}")
-PopsInformationDatabaseJson = "\\etc\\database.json"
-PopsIdentificationDatabaseJson = "\\etc\\PopsFolderList.json"
+etcDirectory = RootDirectory + "\\etc\\"
+LEGACYPopsInformationDatabaseJson = "\\etc\\database.json"
+LEGACYPopsIdentificationDatabaseJson = "\\etc\\PopsFolderList.json"
 PopsDirectory = RootDirectory + "\\pops"
+
+AppSQL = sqlite3.connect(f'{etcDirectory}program.db')
+dbCursor = AppSQL.cursor()
 
 if os.path.exists(PopsDirectory) == False:
             print('no pops folder was detected, creating a "pops" directory and exiting...')
@@ -40,10 +46,28 @@ def ReadSettings():
 
 # In retrospect i think pyson-db was kinda overkill, but i wanna see if someone has the will
 # to push limits.
+# fuck this shit, i'm using SQLite so i get proper experience instead of a amateur (no offense) project. (2026-05-05)
 class PopupDatabase: 
     def __init__(self):
+        
+        print(f'[PopupDatabase] db file is empty, creating tables...')
+        dbCursor.execute('''
+                        CREATE TABLE posts (
+                         id INTEGER PRIMARY KEY,
+                         name TEXT NOT NULL,
+                         img_directory TEXT,
+                         snd_directory TEXT,
+                         time INT)
+                         ''')
+        print({dbCursor.execute('''
+                        INSERT INTO posts (name, time) VAULES ('sexo', 5);
+                        SELECT * FROM posts;
+                        ''')})
+        
+        print("hahahaha eu gosto de rock n roll")
         pass
-
+    
+    @staticmethod 
     def Update():
         #global PopsFolderList
         #global PopsDatabase
@@ -57,17 +81,17 @@ class PopupDatabase:
         
         # this was a substitute for 'db.purge()' that is on official pysondb-v2, but i ended up finding that deleteAll means the same thing. Seriously why isn't this documented?
         if os.path.exists(RootDirectory + "\\etc") == True:
-            if os.path.exists(RootDirectory + PopsInformationDatabaseJson) == True:
-                os.remove(RootDirectory + PopsInformationDatabaseJson)
+            if os.path.exists(RootDirectory + LEGACYPopsInformationDatabaseJson) == True:
+                os.remove(RootDirectory + LEGACYPopsInformationDatabaseJson)
         
-            elif os.path.exists(RootDirectory + PopsIdentificationDatabaseJson) == True:
-                print('[PopupDatabase.Update] ' +  os.path.exists(RootDirectory + PopsIdentificationDatabaseJson) )
-                os.remove(RootDirectory + PopsIdentificationDatabaseJson)
+            elif os.path.exists(RootDirectory + LEGACYPopsIdentificationDatabaseJson) == True:
+                print('[PopupDatabase.Update] ' +  os.path.exists(RootDirectory + LEGACYPopsIdentificationDatabaseJson) )
+                os.remove(RootDirectory + LEGACYPopsIdentificationDatabaseJson)
         else:
             os.mkdir(RootDirectory+"\\etc")
         
-        PopsDatabase = db.getDb(RootDirectory + PopsInformationDatabaseJson)
-        PopsIdentificationListDatabase = db.getDb(RootDirectory + PopsIdentificationDatabaseJson)
+        PopsDatabase = db.getDb(RootDirectory + LEGACYPopsInformationDatabaseJson)
+        PopsIdentificationListDatabase = db.getDb(RootDirectory + LEGACYPopsIdentificationDatabaseJson)
         
         PopsDatabase.deleteAll()
         PopsIdentificationListDatabase.deleteAll()
@@ -110,8 +134,8 @@ class PopupDatabase:
         return PopsIdentificationList
 
     def Read(IdentificationToFind=None):
-        PopsDatabase = db.getDb(RootDirectory + PopsInformationDatabaseJson)
-        PopsIdentificationListDatabase = db.getDb(RootDirectory + PopsIdentificationDatabaseJson)
+        PopsDatabase = db.getDb(RootDirectory + LEGACYPopsInformationDatabaseJson)
+        PopsIdentificationListDatabase = db.getDb(RootDirectory + LEGACYPopsIdentificationDatabaseJson)
         
         
         if IdentificationToFind is None:
@@ -133,8 +157,8 @@ class PopupDatabase:
             return "Not valid response, please use an integer!"
         
     def ReadName(IdentificationToFind=None):
-        PopsDatabase = db.getDb(RootDirectory + PopsInformationDatabaseJson)
-        PopsIdentificationListDatabase = db.getDb(RootDirectory + PopsIdentificationDatabaseJson)
+        PopsDatabase = db.getDb(RootDirectory + LEGACYPopsInformationDatabaseJson)
+        PopsIdentificationListDatabase = db.getDb(RootDirectory + LEGACYPopsIdentificationDatabaseJson)
         
         
         if IdentificationToFind is None:
