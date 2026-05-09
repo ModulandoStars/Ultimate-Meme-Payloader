@@ -112,29 +112,29 @@ class PopupDatabase:
                 PopsAmount -= 1
                 continue
             
-            PopImageFile = ""
-            PopSoundFile = ""
+            PopImagePath = ""
+            PopSoundPath = ""
 
             PopInfo = ini["Settings"]
 
             try:
-                if os.path.exists(PopInfo["imageDir"]) == True:
-                   PopImageFile = PopInfo["imageDir"]
+                if os.path.exists(f"{IndividualPopupDirectory}{PopInfo['imageDir']}") == True:
+                   PopImagePath = IndividualPopupDirectory + PopInfo["imageDir"]
             except KeyError:
-                PopImageFile = ""
+                PopImagePath = None
             try:
-                if os.path.exists(PopInfo["soundDir"]) == False:
-                    PopSoundFile = PopInfo["soundDir"]
+                if os.path.exists(f"{IndividualPopupDirectory}{PopInfo['soundDir']}") == True:
+                    PopSoundPath = IndividualPopupDirectory + PopInfo["soundDir"]
             except KeyError:
-                PopSoundFile = ""
+                PopSoundPath = None
 
 
             # Popup Info 
             dbCursor.execute(f'''
             INSERT INTO posts (name, img_directory, snd_directory, time)
                              VALUES ('{PopsFolderList[PopsAmount-1]}', 
-                                    '{IndividualPopupDirectory + PopImageFile}', 
-                                    '{IndividualPopupDirectory + PopSoundFile}', 
+                                    '{PopImagePath}', 
+                                    '{PopSoundPath}', 
                                     {int(float(PopInfo["time"]))}
                                     )
 
@@ -149,59 +149,39 @@ class PopupDatabase:
         #print('[PopupDatabase.Update] ' + str(PopsIdentificationList) + " converted to db: " + str(PopsIdentificationListDatabase) ) 
         return "Updated."
 
-    def Read(IdentificationToFind=None):
+    def Read(self, IdentificationToFind=None):
         PopsDatabase = db.getDb(RootDirectory + LEGACYPopsInformationDatabaseJson)
         PopsIdentificationListDatabase = db.getDb(RootDirectory + LEGACYPopsIdentificationDatabaseJson)
         
         
-        if IdentificationToFind is None:
-            PopsIdsList = PopsIdentificationListDatabase.getByQuery({"type":"pops"})
+        if IdentificationToFind is None or IdentificationToFind == "":
+            dbCursor.execute('''SELECT * FROM posts''')
+            PopsIdsList = dbCursor.fetchall()
             print('[PopupDatabase.Read] ' + str(PopsIdsList))
-            print('[PopupDatabase.Read] ' + str(type(PopsIdsList)) + " / " + str(len(PopsIdsList)) )
+            print('[PopupDatabase.Read] ' + str(type(PopsIdsList)))
+            return
+        
+        elif type(IdentificationToFind) == str and IdentificationToFind != "":
+            dbCursor.execute(f'''SELECT * FROM posts WHERE name = '{IdentificationToFind}' ''')
+            searchName = dbCursor.fetchone()
+            #print('[PopupDatabase.Read] Found ' +  str(IdentificationToFind) + ' -> ' + str(PopsDatabase.getByQuery({"name":IdentificationToFind})))
+            return searchName
         
         elif isinstance(IdentificationToFind, int) == False:
             error = "ID isn't an integer."
             print('[PopupDatabase.Read] ' + error + " value " + type(IdentificationToFind) + " ->" + str(IdentificationToFind))
             return error
-        
         elif int(IdentificationToFind) != 0:
-            dbCursor.execute(f'''SELECT FROM posts
-                             WHERE id = {IdentificationToFind};
-                             ''')
+            dbCursor.execute(f'''SELECT * FROM posts WHERE id = {IdentificationToFind};''')
             AwnserSQL = dbCursor.fetchone()
-            SearchById = PopsDatabase.getById(IdentificationToFind)
-            print('[PopupDatabase.Read] Found ' +  str(IdentificationToFind) + ' -> ' + str(PopsDatabase.getById(IdentificationToFind)))
+            #SearchById = PopsDatabase.getById(IdentificationToFind)
+            #print('[PopupDatabase.Read] Found ' +  str(IdentificationToFind) + ' -> ' + str(PopsDatabase.getById(IdentificationToFind)))
             return AwnserSQL
-        else:
-            print('[PopupDatabase.Read] ' + "Not valid response, please use an integer!")
-            return "Not valid response, please use an integer!"
         
-    def ReadName(IdentificationToFind=None):
-        PopsDatabase = db.getDb(RootDirectory + LEGACYPopsInformationDatabaseJson)
-        PopsIdentificationListDatabase = db.getDb(RootDirectory + LEGACYPopsIdentificationDatabaseJson)
-        
-        
-        if IdentificationToFind is None:
-            PopsIdsList = PopsIdentificationListDatabase.getByQuery({"type":"pops"})
-            print('[PopupDatabase.Read] ' + str(PopsIdsList))
-            print('[PopupDatabase.Read] ' + str(type(PopsIdsList)) + " / " + str(len(PopsIdsList)) )
-        
-        elif isinstance(IdentificationToFind, int) == True:
-            print("[PopupDatabase.Read] ReadName isn't the correct way to search a popup, in case of integers/ids use the Read function!")
-            PopupDatabase.Read(IdentificationToFind)
 
-        elif isinstance(IdentificationToFind, str) == False:
-            error = "ID isn't an string."
-            print('[PopupDatabase.Read] ' + error + " value " + type(IdentificationToFind) + " ->" + str(IdentificationToFind))
-            return error
-        
-        elif str(IdentificationToFind) != "":
-            searchName = PopsDatabase.getByQuery({"name":IdentificationToFind})
-            print('[PopupDatabase.Read] Found ' +  str(IdentificationToFind) + ' -> ' + str(PopsDatabase.getByQuery({"name":IdentificationToFind})))
-            return searchName
         else:
-            print('[PopupDatabase.Read] ' + "Not valid response, please use an string!")
-            return "Not valid response, please use an string!"
+            print('[PopupDatabase.Read] ' + "Not valid response, please use an integer or string!")
+            return "Not valid response, please use an integer!"
 
 class Settings: 
     def __init__(self):
@@ -226,32 +206,40 @@ class Settings:
 appDatabase = PopupDatabase()
 
 def TerminalOnly():
-    print('[1] - Update application database.')
-    print('[2] - Read Settings.')
-    print('[3] - Test a random popup.')
-    print('[4] - Quit')
-  
     while True:   
+        print("[1] - Update application database.\n[2] - Read Settings.\n[3] - Test a random popup.\n[4] - Search Popup Information.\n[5] - Quit.")
         userCommand = int(input("Select what to do: "))
 
  
         if userCommand == 1:
-            print('a')
             appDatabase.Update()
 
         elif userCommand == 2:
             print(Settings.Update())
 
         elif userCommand == 3:
-        #    randomPopup = Ids[random.randint(0, len(Ids)-1)]
-        #    print(randomPopup)
-            pass
+            dbCursor.execute(''' SELECT * FROM posts LIMIT 0''')
+            popsQuantity = len(dbCursor.description)+1
+            randomPopup = random.randint(1, popsQuantity)
+            print(f"Chosen Popup: {randomPopup} (1-{popsQuantity}) -> {appDatabase.Read(randomPopup)}")
+        
         elif userCommand == 4:
+            chosenMethod = input("Search by ID or Name: ")
+            try:
+                if int(chosenMethod) > 0:
+                    chosenID = int(chosenMethod)
+                    print(appDatabase.Read(chosenID))
+            except ValueError:
+                print(appDatabase.Read(chosenName))
+            
+        
+        elif userCommand == 5:
             break
+  
 
 
 
 if __name__ == '__main__':
-    #os.system('cls' if os.name == 'nt' else 'clear')
+    os.system('cls' if os.name == 'nt' else 'clear')
     print('Ultimate Meme Payloader - foognocchie 2026')
     TerminalOnly()
