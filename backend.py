@@ -71,7 +71,6 @@ class PopupDatabase:
         #global PopsIdentificationListDatabase
         PopsAmount = len(PopsFolderList)
         
-        # TODO: add fail checks, like if image/sound/time file dosen't exist, 
         # preferebly another function that this calls at the end of the function.
 
        
@@ -93,13 +92,26 @@ class PopupDatabase:
         PopsDatabase.deleteAll()
         PopsIdentificationListDatabase.deleteAll()
 
+        # I want to make a full check if it's necessary to add things to the table. too bad! :D
+ 
+        #PopsToCheck = PopsAmount
+        #while PopsToCheck > 0:
+        #    dbCursor.execute('''SELECT * FROM posts WHERE name = '{PopsFolderList[PopsAmount-1]}' ''')
+        #    catchMiss = dbCursor.fetchone()
+        #    print(f"Cheching if {PopsFolderList[PopsAmount-1]} already exists -> {catchMiss}")
+        #    if catchMiss != None:
+        #        print('[PopupDatabase.Update] name already exists, skipping...')
+        #        PopsAlready
+        #        PopsToCheck -= 1
+        #        continue
 
-        #PopsIdentificationList = []
+        dbCursor.execute('''DELETE FROM posts''')
 
         while PopsAmount > 0:
             #ini = yaml.safe
             print(f'[PopupDatabase.Update] - Adding {PopsFolderList[PopsAmount-1]} to the table...') 
-            
+
+
             IndividualPopupDirectory = PopsDirectory +"\\"+ PopsFolderList[PopsAmount-1] + "\\"
             iniDir = PopsDirectory +"\\"+ PopsFolderList[PopsAmount-1] + "\\settings.yaml"
             
@@ -230,7 +242,7 @@ def TerminalOnly():
                     chosenID = int(chosenMethod)
                     print(appDatabase.Read(chosenID))
             except ValueError:
-                print(appDatabase.Read(chosenName))
+                print(appDatabase.Read(chosenMethod))
             
         
         elif userCommand == 5:
