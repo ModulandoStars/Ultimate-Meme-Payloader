@@ -3,6 +3,7 @@ pops/*
 
 __pycache__/*
 etc/*.json
+etc/ump_database
 
 build/*
 dist/*

@@ -18,7 +18,7 @@ LEGACYPopsInformationDatabaseJson = "\\etc\\database.json"
 LEGACYPopsIdentificationDatabaseJson = "\\etc\\PopsFolderList.json"
 PopsDirectory = RootDirectory + "\\pops"
 
-AppSQL = sqlite3.connect(f'{etcDirectory}program.db')
+AppSQL = sqlite3.connect(f'{etcDirectory}ump_database')
 dbCursor = AppSQL.cursor()
 
 if os.path.exists(PopsDirectory) == False:
@@ -50,24 +50,24 @@ def ReadSettings():
 class PopupDatabase: 
     def __init__(self):
         
-        print(f'[PopupDatabase] db file is empty, creating tables...')
+        print(f'[PopupDatabase.SQLite] db file is empty, creating tables...')
         dbCursor.execute('''
-                        CREATE TABLE posts (
+                        CREATE TABLE IF NOT EXISTS posts (
                          id INTEGER PRIMARY KEY,
                          name TEXT NOT NULL,
                          img_directory TEXT,
                          snd_directory TEXT,
-                         time INT)
+                         time INT NOT NULL)
                          ''')
-        print({dbCursor.execute('''
-                        INSERT INTO posts (name, time) VAULES ('sexo', 5);
-                        SELECT * FROM posts;
-                        ''')})
-        
+        #dbCursor.execute('''
+        #                INSERT INTO posts (name, time)
+        #                         VALUES ('sexo', 5)
+        #                ''')
+        AppSQL.commit()
         print("hahahaha eu gosto de rock n roll")
-        pass
+        
     
-    @staticmethod 
+#    @staticmethod 
     def Update():
         #global PopsFolderList
         #global PopsDatabase
@@ -114,6 +114,16 @@ class PopupDatabase:
             PopInfo = ini["Settings"]
 
             # Popup Info 
+            dbCursor.execute(f'''
+            INSERT INTO posts (name, img_directory, snd_directory, time)
+                             VALUES ('{PopsFolderList[PopsAmount-1]}', 
+                                    '{IndividualPopupDirectory + PopInfo['imageDir']}', 
+                                    '{IndividualPopupDirectory + PopInfo['soundDir']}', 
+                                    {int(float(PopInfo['time']))}
+                                    )
+
+            ''')
+            
             PopId = PopsDatabase.add({
                 "name":             PopsFolderList[PopsAmount-1],
                 "imageDirectory":   IndividualPopupDirectory + PopInfo['imageDir'],
@@ -124,7 +134,7 @@ class PopupDatabase:
 
             PopsIdentificationList.insert(0, PopId)  
             PopsAmount -= 1
-
+        AppSQL.commit()
         PopsIdentificationListDatabase.add({
             "type": "pops",
             "list": PopsIdentificationList
@@ -183,7 +193,7 @@ class PopupDatabase:
             print('[PopupDatabase.Read] ' + "Not valid response, please use an string!")
             return "Not valid response, please use an string!"
 
-class Settings:
+class Settings: 
     def __init__(self):
         pass
 
@@ -205,12 +215,13 @@ class Settings:
 
 
 if __name__ == '__main__':
+    appDatabase = PopupDatabase()
     print('[Backend] This is running separetely!!!')
     Ids = PopupDatabase.Update()
     randomPopup = Ids[random.randint(0, len(Ids)-1)]
     print(randomPopup)
-    print(Settings().Update())
+    print(Settings.Update())
 
-    PopupDatabase.Read()
+    #appDatabase.Read()
     #PopupDatabase.Read(randomPopup)
     #print("AAAAAAAAAAAAAAAA "+ Ids)
