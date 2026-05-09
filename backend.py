@@ -6,8 +6,8 @@ from configparser import ConfigParser     # Settings for the app and individual 
 
 from pysondb import db                   # for ACTUAL database!!!
 import sqlite3
+import yaml
 
-ini = ConfigParser()
 
 # os.path is not unix friendly! may be better to change to something more universal
 
@@ -20,6 +20,8 @@ PopsDirectory = RootDirectory + "\\pops"
 
 AppSQL = sqlite3.connect(f'{etcDirectory}ump_database')
 dbCursor = AppSQL.cursor()
+
+
 
 if os.path.exists(PopsDirectory) == False:
             print('no pops folder was detected, creating a "pops" directory and exiting...')
@@ -37,11 +39,6 @@ else:
     PopsFolderList = FolderListFilter
     del FolderListFilter
     print(f"[PopupDatabase.FolderList] post folder filter: {PopsFolderList}")
-
-
-def ReadSettings():
-    ini.read(RootDirectory + "\\etc\\settings.ini")
-    return 
 
 
 # In retrospect i think pyson-db was kinda overkill, but i wanna see if someone has the will
@@ -68,7 +65,7 @@ class PopupDatabase:
         
     
 #    @staticmethod 
-    def Update():
+    def Update(self):
         #global PopsFolderList
         #global PopsDatabase
         #global PopsIdentificationListDatabase
@@ -97,51 +94,60 @@ class PopupDatabase:
         PopsIdentificationListDatabase.deleteAll()
 
 
-        PopsIdentificationList = []
+        #PopsIdentificationList = []
 
         while PopsAmount > 0:
+            #ini = yaml.safe
+            print(f'[PopupDatabase.Update] - Adding {PopsFolderList[PopsAmount-1]} to the table...') 
+            
             IndividualPopupDirectory = PopsDirectory +"\\"+ PopsFolderList[PopsAmount-1] + "\\"
-            iniDir = PopsDirectory +"\\"+ PopsFolderList[PopsAmount-1] + "\\settings.ini"
+            iniDir = PopsDirectory +"\\"+ PopsFolderList[PopsAmount-1] + "\\settings.yaml"
             
             if os.path.exists(iniDir) == True:
                 print('[PopupDatabase.Update] ' + "reading: '" + iniDir + "'" )
-                ini.read(iniDir)    
+                with open(iniDir) as file:
+                    ini = yaml.safe_load(file)    
             else:
                 print('[PopupDatabase.Update] ' + iniDir + " dosen't exist, skipping...")
                 PopsAmount -= 1
                 continue
             
+            PopImageFile = ""
+            PopSoundFile = ""
+
             PopInfo = ini["Settings"]
+
+            try:
+                if os.path.exists(PopInfo["imageDir"]) == True:
+                   PopImageFile = PopInfo["imageDir"]
+            except KeyError:
+                PopImageFile = ""
+            try:
+                if os.path.exists(PopInfo["soundDir"]) == False:
+                    PopSoundFile = PopInfo["soundDir"]
+            except KeyError:
+                PopSoundFile = ""
+
 
             # Popup Info 
             dbCursor.execute(f'''
             INSERT INTO posts (name, img_directory, snd_directory, time)
                              VALUES ('{PopsFolderList[PopsAmount-1]}', 
-                                    '{IndividualPopupDirectory + PopInfo['imageDir']}', 
-                                    '{IndividualPopupDirectory + PopInfo['soundDir']}', 
-                                    {int(float(PopInfo['time']))}
+                                    '{IndividualPopupDirectory + PopImageFile}', 
+                                    '{IndividualPopupDirectory + PopSoundFile}', 
+                                    {int(float(PopInfo["time"]))}
                                     )
 
             ''')
-            
-            PopId = PopsDatabase.add({
-                "name":             PopsFolderList[PopsAmount-1],
-                "imageDirectory":   IndividualPopupDirectory + PopInfo['imageDir'],
-                "soundDirectory":   IndividualPopupDirectory + PopInfo['soundDir'],
-                "time":             int(float(PopInfo['time'])),
-                })
-            print('[PopupDatabase.Update] ' + PopsFolderList[PopsAmount-1] + " has the id of: " + str(PopId))   
+              
 
-            PopsIdentificationList.insert(0, PopId)  
+            #PopsIdentificationList.insert(0, PopId)  
             PopsAmount -= 1
         AppSQL.commit()
-        PopsIdentificationListDatabase.add({
-            "type": "pops",
-            "list": PopsIdentificationList
-        })
+        
 
-        print('[PopupDatabase.Update] ' + str(PopsIdentificationList) + " converted to db: " + str(PopsIdentificationListDatabase) ) 
-        return PopsIdentificationList
+        #print('[PopupDatabase.Update] ' + str(PopsIdentificationList) + " converted to db: " + str(PopsIdentificationListDatabase) ) 
+        return "Updated."
 
     def Read(IdentificationToFind=None):
         PopsDatabase = db.getDb(RootDirectory + LEGACYPopsInformationDatabaseJson)
@@ -159,9 +165,13 @@ class PopupDatabase:
             return error
         
         elif int(IdentificationToFind) != 0:
-            SearchById =PopsDatabase.getById(IdentificationToFind)
+            dbCursor.execute(f'''SELECT FROM posts
+                             WHERE id = {IdentificationToFind};
+                             ''')
+            AwnserSQL = dbCursor.fetchone()
+            SearchById = PopsDatabase.getById(IdentificationToFind)
             print('[PopupDatabase.Read] Found ' +  str(IdentificationToFind) + ' -> ' + str(PopsDatabase.getById(IdentificationToFind)))
-            return SearchById
+            return AwnserSQL
         else:
             print('[PopupDatabase.Read] ' + "Not valid response, please use an integer!")
             return "Not valid response, please use an integer!"
@@ -213,15 +223,35 @@ class Settings:
         print(f"[Settings - Load] {configurations}")
         return configurations
 
+appDatabase = PopupDatabase()
+
+def TerminalOnly():
+    print('[1] - Update application database.')
+    print('[2] - Read Settings.')
+    print('[3] - Test a random popup.')
+    print('[4] - Quit')
+  
+    while True:   
+        userCommand = int(input("Select what to do: "))
+
+ 
+        if userCommand == 1:
+            print('a')
+            appDatabase.Update()
+
+        elif userCommand == 2:
+            print(Settings.Update())
+
+        elif userCommand == 3:
+        #    randomPopup = Ids[random.randint(0, len(Ids)-1)]
+        #    print(randomPopup)
+            pass
+        elif userCommand == 4:
+            break
+
+
 
 if __name__ == '__main__':
-    appDatabase = PopupDatabase()
-    print('[Backend] This is running separetely!!!')
-    Ids = PopupDatabase.Update()
-    randomPopup = Ids[random.randint(0, len(Ids)-1)]
-    print(randomPopup)
-    print(Settings.Update())
-
-    #appDatabase.Read()
-    #PopupDatabase.Read(randomPopup)
-    #print("AAAAAAAAAAAAAAAA "+ Ids)
+    #os.system('cls' if os.name == 'nt' else 'clear')
+    print('Ultimate Meme Payloader - foognocchie 2026')
+    TerminalOnly()
