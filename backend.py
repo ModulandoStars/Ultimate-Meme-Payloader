@@ -169,14 +169,14 @@ class PopupDatabase:
         if IdentificationToFind is None or IdentificationToFind == "":
             dbCursor.execute('''SELECT * FROM posts''')
             PopsIdsList = dbCursor.fetchall()
-            print('[PopupDatabase.Read] ' + str(PopsIdsList))
-            print('[PopupDatabase.Read] ' + str(type(PopsIdsList)))
-            return
+            print(f'[PopupDatabase.Read]  {str(PopsIdsList)}')
+            print(f'[PopupDatabase.Read] {str(type(PopsIdsList))}')
+            return PopsIdsList
         
         elif type(IdentificationToFind) == str and IdentificationToFind != "":
             dbCursor.execute(f'''SELECT * FROM posts WHERE name = '{IdentificationToFind}' ''')
             searchName = dbCursor.fetchone()
-            #print('[PopupDatabase.Read] Found ' +  str(IdentificationToFind) + ' -> ' + str(PopsDatabase.getByQuery({"name":IdentificationToFind})))
+            print(f'[PopupDatabase.Read] Found  "{str(IdentificationToFind)}" -> {str(searchName)}\ntype: {type(searchName)}')
             return searchName
         
         elif isinstance(IdentificationToFind, int) == False:
@@ -200,7 +200,7 @@ class Settings:
         pass
 
 
-    def Update():
+    def Update(self):
         with open("./etc/settings.yaml") as file:
             SettingsFile = yaml.safe_load(file)
 
@@ -218,6 +218,7 @@ class Settings:
 appDatabase = PopupDatabase()
 
 def TerminalOnly():
+    umpSettings = Settings()
     while True:   
         print("[1] - Update application database.\n[2] - Read Settings.\n[3] - Test a random popup.\n[4] - Search Popup Information.\n[5] - Quit.")
         userCommand = int(input("Select what to do: "))
@@ -227,7 +228,7 @@ def TerminalOnly():
             appDatabase.Update()
 
         elif userCommand == 2:
-            print(Settings.Update())
+            print(umpSettings.Update())
 
         elif userCommand == 3:
             dbCursor.execute(''' SELECT * FROM posts LIMIT 0''')
@@ -242,7 +243,10 @@ def TerminalOnly():
                     chosenID = int(chosenMethod)
                     print(appDatabase.Read(chosenID))
             except ValueError:
-                print(appDatabase.Read(chosenMethod))
+                popup = appDatabase.Read(chosenMethod)
+                print(popup)
+                #print(f'{popup} e time é {popup[4]}')
+
             
         
         elif userCommand == 5:

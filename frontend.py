@@ -24,7 +24,12 @@ from localization import language
 localization = language()
 
 import os               # File and System Shenanegains
-from backend import PopupDatabase, RootDirectory, Settings
+#from backend import PopupDatabase, RootDirectory, Settings
+import backend
+
+PopupDatabase = backend.PopupDatabase()
+RootDirectory = backend.RootDirectory
+Settings = backend.Settings()
 
 app = QApplication(sys.argv)
 
@@ -85,9 +90,9 @@ class PopupList(QtWidgets.QMainWindow):
         print(self.PlayingAudio)
         if self.AudioReady == True:
             if self.PlayingAudio == True:
-                self.popupSound = playsound(self.SelectedPopup["soundDirectory"], block=False)
-                self.PlayingAudioTimer.start(int(self.SelectedPopup["time"])*1000)
-                print(f"timer for {int(self.SelectedPopup['time'])}")
+                self.popupSound = playsound(self.SelectedPopup[3], block=False)
+                self.PlayingAudioTimer.start(int(self.SelectedPopup[4])*1000)
+                print(f"timer for {int(self.SelectedPopup[4])}")
                 self.PlaybackControlButton.setText(self.playbackStop)
             else:
                 self.popupSound.stop()
@@ -103,7 +108,7 @@ class PopupList(QtWidgets.QMainWindow):
 
 #    def ControlAudio(self):
 #        popupSound = playsound(self.SelectedPopup["soundDirectory"])
-#        print(f'[CONTROL AUDIO] {self.SelectedPopup["soundDirectory"]}')
+#        print(f'[CONTROL AUDIO] {self.SelectedPopup[3]}')
 #        self.PlayingAudio = popupSound.is_alive()
 #        if self.AudioReady == 1:
 #            if self.PlayingAudio == False:
@@ -118,33 +123,35 @@ class PopupList(QtWidgets.QMainWindow):
     def PopupSelectionChanged(self, item):
         self.AudioReady = False
         self.SelectedPopup = item.text()
-        self.SelectedPopup = PopupDatabase.ReadName(self.SelectedPopup)
-        self.SelectedPopup = self.SelectedPopup[0]
-        print(f"{str(self.SelectedPopup)} / {str(type(self.SelectedPopup))}")
+        for i, sublist in enumerate(PopsList):
+            if self.SelectedPopup in sublist:
+                print(f"[BUNDA] tá no item {i} -> {PopsList[i]}")
+                self.SelectedPopup = PopsList[i]
+                break
         
         
         #PopupImage = QPixmap(self.SelectedPopup["imageDirectory"])
-        if os.path.exists(self.SelectedPopup["imageDirectory"]) and os.path.isfile(self.SelectedPopup["imageDirectory"]) == True:
-            PopupImage = QPixmap(self.SelectedPopup["imageDirectory"])
+        if os.path.exists(self.SelectedPopup[2]) and os.path.isfile(self.SelectedPopup[3]) == True:
+            PopupImage = QPixmap(self.SelectedPopup[2])
             self.PopupImagePreview.setPixmap(PopupImage)
         else:
             PopupImage = QPixmap(noImage)
             self.PopupImagePreview.setPixmap(PopupImage)
-            print(f'[Popup Manager] No image ({self.SelectedPopup["imageDirectory"]}) file is present, using placeholder -> {noImage}')
+            print(f'[Popup Manager] No image ({self.SelectedPopup[2]}) file is present, using placeholder -> {noImage}')
 
-        if os.path.exists(self.SelectedPopup["soundDirectory"]) and os.path.isfile(self.SelectedPopup["soundDirectory"]) == True:
+        if os.path.exists(self.SelectedPopup[3]) and os.path.isfile(self.SelectedPopup[3]) == True:
             
             self.AudioReady = True
             self.PlaybackControlButton.setEnabled(True)
-            print(f'[Popup Manager] Found {self.SelectedPopup["soundDirectory"]} as audio')
+            print(f'[Popup Manager] Found {self.SelectedPopup[3]} as audio')
         else:
             self.PlaybackControlButton.setEnabled(False)
-            print(f'[Popup Manager] Audio file ({self.SelectedPopup["soundDirectory"]}) dosent exist ')
+            print(f'[Popup Manager] Audio file ({self.SelectedPopup[3]}) dosent exist ')
         
         if self.PlayingAudio == True:
             self.ControlAudio()
         
-        self.PopupName.setText(self.SelectedPopup["name"])
+        self.PopupName.setText(self.SelectedPopup[1])
 
 # Payloader        
 
@@ -167,7 +174,8 @@ class Payloader():
 
         startStopwatch = 0
         stopwatch = 0
-        ChosenPopup = PopupDatabase.ReadName(PopupNameList[random.randint(0, len(PopupNameList)-1)])[0]
+        ChosenPopup = PopsList[random.randint(0, len(PopsList)-1)]
+        print(f"[Payload] The Chosen Popup was -> {ChosenPopup}")
         IsImageActive = False
         IsPayloadActive = False
         IsAudioPlaying = False
@@ -187,17 +195,20 @@ class Payloader():
             
             if IsPayloadActive == True:
                 if IsImageActive == False:
-                    if os.path.exists(ChosenPopup['imageDirectory']) and os.path.isfile(ChosenPopup['imageDirectory']) == True:
-                        pygame_PopupImage = pygame.image.load(ChosenPopup['imageDirectory'])
-                        pygame.display.set_mode(pygame_PopupImage.get_size(), pygame.SHOWN)
-                        self.screen.blit(pygame_PopupImage, pygame_PopupImage.get_rect())
-                        
-                        IsImageActive = True
-                        print(f"[Payloader - Image] showing image")
-                
+                    try:
+                        if os.path.exists(ChosenPopup[2]) and os.path.isfile(ChosenPopup[2]) == True:
+                            pygame_PopupImage = pygame.image.load(ChosenPopup[2])
+                            pygame.display.set_mode(pygame_PopupImage.get_size(), pygame.SHOWN)
+                            self.screen.blit(pygame_PopupImage, pygame_PopupImage.get_rect())
+
+                            IsImageActive = True
+                            print(f"[Payloader - Image] showing image")
+                    except TypeError:
+                        pass
+
                 if IsAudioPlaying == False:
-                    if os.path.exists(ChosenPopup['soundDirectory']) and os.path.isfile(ChosenPopup['soundDirectory']) == True:
-                        pygame.mixer.music.load(ChosenPopup['soundDirectory'])
+                    if os.path.exists(ChosenPopup[3]) and os.path.isfile(ChosenPopup[3]) == True:
+                        pygame.mixer.music.load(ChosenPopup[3])
                         pygame.mixer.music.set_volume(Config.get('volume'))
                         pygame.mixer.music.play(0)
                         IsAudioPlaying = True
@@ -205,19 +216,21 @@ class Payloader():
                         
                 
                 
-                if (stopwatch - startStopwatch)/1000 > int(ChosenPopup['time']):
+                if (stopwatch - startStopwatch)/1000 > int(ChosenPopup[4]):
                     startStopwatch = 0
                     stopwatch = 0
                     pygame.mixer.music.stop()
                     pygame.display.set_mode((800, 600), pygame.HIDDEN)
-                    IsAudioPlaying = False                    
+                    IsAudioPlaying = False  
+                    IsImageActive = False                  
                     IsPayloadActive = False
                     #print(f"[Payloader - Payload] end tick time:{pygame.time.get_ticks()}")
             
             else:
                 if not IsPauseTimerActive:
                     startStopwatch = pygame.time.get_ticks()
-                    ChosenPopup = PopupDatabase.ReadName(PopupNameList[random.randint(0, len(PopupNameList)-1)])[0]
+                    ChosenPopup = PopsList[random.randint(0, len(PopsList)-1)]
+                    print(f'[Payload - HIDDEN] Chose {ChosenPopup} as the next')
                     pauseTimer = Config.get('pauseTimer') + random.randint(0, Config.get('addMaxPauseTimer'))
                     print(f"[Payloader - HIDDEN] pauseTimer is {pauseTimer}")
                     IsPauseTimerActive = True
@@ -295,25 +308,23 @@ if __name__ == '__main__':
 
     #print(localization.ocean)
 
-    PopsList = PopupDatabase.Update()
+    PopsList = PopupDatabase.Read()
+    print(f"[Popup Database] List:{PopsList}\ntype: {type(PopsList)}")
     PopsListIDConvertion = len(PopsList)
-    print(f"[Popup Database] List:{PopsList}")
     
     global PopupNameList
     PopupNameList = []
     while PopsListIDConvertion > 0:
-        print(f"Actual ID to read: {PopsList[PopsListIDConvertion-1]}")
-        #print(f"Type {type(PopsList[PopsListIDConvertion-1])}")
-        IndividualPopupInfomation = PopupDatabase.Read(PopsList[PopsListIDConvertion-1])
-        print(f"name of the popup: {IndividualPopupInfomation['name']}")
-        PopupNameList.insert(0, IndividualPopupInfomation["name"])
+        ActualPopup = PopsList[PopsListIDConvertion-1]
+        print(f"Actual ID to read: {ActualPopup} TYPE: {type(ActualPopup)}")
+        PopupNameList.insert(0, ActualPopup[1])
         
         PopsListIDConvertion -= 1
     print(f"List of Popups available: {PopupNameList}")
     
 
     
-    print(PopupDatabase.Read())
+    #print(PopupDatabase.Read())
 
 
     MainMenu().show()
