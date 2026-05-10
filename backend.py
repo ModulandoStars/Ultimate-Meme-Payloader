@@ -1,21 +1,20 @@
-import os                                       # File and System Shenanegains
-import yaml
+import os
+from pathlib import Path                                        # File and System Shenanegains
+import yaml                                     # Settings for the app and individual pops
 import random
-#import json                                    # for database (I don't know what I'm doing ;w;)
-from configparser import ConfigParser     # Settings for the app and individual pops
-
-from pysondb import db                   # for ACTUAL database!!!
-import sqlite3
+import sqlite3  # for ACTUAL database!!!
 import yaml
+import pyfiglet
 
+title = 'Ultimate Meme Payloader'
+mainAuthor = 'foognocchie'
+repo = 'https://github.com/foognocchie/Ultimate-Meme-Payloader'
 
-# os.path is not unix friendly! may be better to change to something more universal
+# os.path is not unix ~~friendly~~ more like old! may be better to change to something more universal
 
 RootDirectory = os.getcwd()
 print(f"UMP's root directory is: {RootDirectory}")
 etcDirectory = RootDirectory + "\\etc\\"
-LEGACYPopsInformationDatabaseJson = "\\etc\\database.json"
-LEGACYPopsIdentificationDatabaseJson = "\\etc\\PopsFolderList.json"
 PopsDirectory = RootDirectory + "\\pops"
 
 AppSQL = sqlite3.connect(f'{etcDirectory}ump_database')
@@ -70,27 +69,12 @@ class PopupDatabase:
         #global PopsDatabase
         #global PopsIdentificationListDatabase
         PopsAmount = len(PopsFolderList)
-        
-        # preferebly another function that this calls at the end of the function.
 
-       
-        
-        # this was a substitute for 'db.purge()' that is on official pysondb-v2, but i ended up finding that deleteAll means the same thing. Seriously why isn't this documented?
+
         if os.path.exists(RootDirectory + "\\etc") == True:
-            if os.path.exists(RootDirectory + LEGACYPopsInformationDatabaseJson) == True:
-                os.remove(RootDirectory + LEGACYPopsInformationDatabaseJson)
-        
-            elif os.path.exists(RootDirectory + LEGACYPopsIdentificationDatabaseJson) == True:
-                print('[PopupDatabase.Update] ' +  os.path.exists(RootDirectory + LEGACYPopsIdentificationDatabaseJson) )
-                os.remove(RootDirectory + LEGACYPopsIdentificationDatabaseJson)
+            pass
         else:
             os.mkdir(RootDirectory+"\\etc")
-        
-        PopsDatabase = db.getDb(RootDirectory + LEGACYPopsInformationDatabaseJson)
-        PopsIdentificationListDatabase = db.getDb(RootDirectory + LEGACYPopsIdentificationDatabaseJson)
-        
-        PopsDatabase.deleteAll()
-        PopsIdentificationListDatabase.deleteAll()
 
         # I want to make a full check if it's necessary to add things to the table. too bad! :D
  
@@ -162,10 +146,6 @@ class PopupDatabase:
         return "Updated."
 
     def Read(self, IdentificationToFind=None):
-        PopsDatabase = db.getDb(RootDirectory + LEGACYPopsInformationDatabaseJson)
-        PopsIdentificationListDatabase = db.getDb(RootDirectory + LEGACYPopsIdentificationDatabaseJson)
-        
-        
         if IdentificationToFind is None or IdentificationToFind == "":
             dbCursor.execute('''SELECT * FROM posts''')
             PopsIdsList = dbCursor.fetchall()
@@ -219,7 +199,10 @@ appDatabase = PopupDatabase()
 
 def TerminalOnly():
     umpSettings = Settings()
+    os.system('cls' if os.name == 'nt' else 'clear')
+
     while True:   
+        print(f'{pyfiglet.figlet_format(title)}\n© {mainAuthor}\n{repo}\n')
         print("[1] - Update application database.\n[2] - Read Settings.\n[3] - Test a random popup.\n[4] - Search Popup Information.\n[5] - Quit.")
         userCommand = int(input("Select what to do: "))
 
@@ -231,10 +214,13 @@ def TerminalOnly():
             print(umpSettings.Update())
 
         elif userCommand == 3:
-            dbCursor.execute(''' SELECT * FROM posts LIMIT 0''')
-            popsQuantity = len(dbCursor.description)+1
-            randomPopup = random.randint(1, popsQuantity)
-            print(f"Chosen Popup: {randomPopup} (1-{popsQuantity}) -> {appDatabase.Read(randomPopup)}")
+            dbCursor.execute(''' SELECT * FROM posts''')
+            randomPopup = dbCursor.fetchall()
+            print(len(randomPopup))
+            #randomPopup = randomPopup[1]
+            print(randomPopup[random.randint(0, len(randomPopup)-1)])
+            # randomPopup = randomPopup[random.randint(0,len(randomPopup-1))]
+            #print(f"Chosen Popup: {randomPopup}")
         
         elif userCommand == 4:
             chosenMethod = input("Search by ID or Name: ")
@@ -256,6 +242,4 @@ def TerminalOnly():
 
 
 if __name__ == '__main__':
-    os.system('cls' if os.name == 'nt' else 'clear')
-    print('Ultimate Meme Payloader - foognocchie 2026')
     TerminalOnly()
